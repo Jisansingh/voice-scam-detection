@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CybCup - Login with Phone & OTP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="login-card">
+      <div class="title-bar">Login/Sign Up</div>
+      <form id="loginForm" autocomplete="off">
+        <label for="phoneNumber" class="label">Phone Number</label>
+        <input type="tel" id="phoneNumber" class="input" placeholder="Enter phone number" required maxlength="10" pattern="[0-9]{10}">
+        
+        <button type="button" id="sendOtpBtn" class="action-btn">Send OTP</button>
+
+        <label for="otp" class="label">OTP</label>
+        <input type="text" id="otp" class="input" placeholder="Enter OTP" disabled required maxlength="6" pattern="[0-9]{6}">
+        
+        <button type="submit" id="loginBtn" class="action-btn" disabled>Login</button>
+      </form>
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

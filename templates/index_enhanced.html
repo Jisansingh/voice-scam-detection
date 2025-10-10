@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Advanced Neural Threat Detection & Analysis System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a202c 50%, #2d3748 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(99, 179, 237, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 0;
+            background: #2d3748;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #00d4ff 0%, #00a8cc 100%);
+            padding: 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .section-title {
+            color: #63b3ed;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .section-title::before {
+            content: "🧠";
+            margin-right: 15px;
+            font-size: 1.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #63b3ed);
+            border-radius: 2px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .text-analysis-card, .audio-analysis-card {
+            background: linear-gradient(145deg, #4a5568 0%, #3a4652 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid #63b3ed;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .text-analysis-card:hover, .audio-analysis-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(99, 179, 237, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: #00d4ff;
+        }
+
+        .upload-area {
+            border: 2px dashed #63b3ed;
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            background: rgba(99, 179, 237, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 30px rgba(0, 212, 255, 0.2),
+                0 0 20px rgba(99, 179, 237, 0.3);
+        }
+
+        .upload-area:hover::before {
+            opacity: 1;
+        }
+
+        .upload-area.dragover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.15);
+            transform: scale(1.02);
+            box-shadow: 
+                0 15px 40px rgba(0, 212, 255, 0.3),
+                0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .upload-area.dragover::before {
+            opacity: 1;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #63b3ed;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            color: #e2e8f0;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: #a0aec0;
+            font-size: 1rem;
+        }
+
+        #audioFile {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #1a202c;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 10px 0;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 35px rgba(0, 212, 255, 0.4),
+                0 0 20px rgba(0, 212, 255, 0.3);
+            background: linear-gradient(135deg, #00e5ff 0%, #00b8e6 100%);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn:disabled {
+            background: linear-gradient(135deg, #4a5568 0%, #3a4652 100%);
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            min-width: auto;
+        }
+
+        .btn-record {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            margin-top: 15px;
+        }
+
+        .btn-record:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #d63031 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-record:active {
+            background: linear-gradient(135deg, #e55353 0%, #c0392b 100%);
+        }
+
+        .btn-record.recording {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            animation: recordingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(231, 76, 60, 0.6);
+            }
+        }
+
+        .recording-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            animation: dotPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        #recordingTimer {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #c0392b;
+        }        /* History Sidebar Styles */
+        .history-sidebar {
+            width: 320px;
+            background: #2a3441;
+            border-left: 1px solid #4a5568;
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        .history-header {
+            background: #3a4652;
+            padding: 20px;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .history-title {
+            color: #e2e8f0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .history-title::before {
+            content: "🕒";
+            margin-right: 10px;
+        }
+
+        .history-stats {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .history-stats div {
+            margin-bottom: 5px;
+        }
+
+        .clear-history-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .clear-history-btn:hover {
+            background: #c53030;
+        }
+
+        .history-items {
+            padding: 20px;
+        }
+
+        .history-item {
+            background: #4a5568;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #63b3ed;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: #5a6578;
+            transform: translateX(-3px);
+        }
+
+        .history-item.safe {
+            border-left-color: #68d391;
+        }
+
+        .history-item.danger {
+            border-left-color: #f56565;
+        }
+
+        .history-item-risk {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .history-item-risk.safe {
+            color: #68d391;
+        }
+
+        .history-item-risk.danger {
+            color: #f56565;
+        }
+
+        .history-item-filename {
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .history-item-percent {
+            color: #a0aec0;
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            display: none;
+            margin: 30px 0;
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(145deg, #4a5568 0%, #3a4652 100%);
+            border-radius: 15px;
+            border: 1px solid #63b3ed;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .spinner::before,
+        .spinner::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .spinner::before {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            animation: spin 1.5s linear infinite;
+        }
+
+        .spinner::after {
+            width: 40px;
+            height: 40px;
+            top: 5px;
+            left: 5px;
+            border: 3px solid transparent;
+            border-top: 3px solid #00d4ff;
+            border-right: 3px solid #00d4ff;
+            animation: spin 1s linear infinite reverse;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #63b3ed;
+            font-size: 1.1rem;
+            font-weight: 500;
+            animation: fade 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes fade {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        #textInput {
+            width: 100%;
+            height: 150px;
+            padding: 20px;
+            border: 2px solid #63b3ed;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.6;
+            background: #2d3748;
+            color: #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        #textInput:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+
+        #textInput::placeholder {
+            color: #a0aec0;
+        }
+
+        .sample-buttons {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .sample-buttons small {
+            color: #a0aec0;
+            display: block;
+            margin-bottom: 15px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .sample-btn.safe {
+            background: rgba(72, 187, 120, 0.2);
+            color: #68d391;
+            border: 1px solid #68d391;
+        }
+
+        .sample-btn.safe:hover {
+            background: rgba(72, 187, 120, 0.3);
+        }
+
+        .sample-btn.scam {
+            background: rgba(245, 101, 101, 0.2);
+            color: #f56565;
+            border: 1px solid #f56565;
+        }
+
+        .sample-btn.scam:hover {
+            background: rgba(245, 101, 101, 0.3);
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, #4a5568 0%, #3a4652 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border-left: 5px solid #63b3ed;
+            border: 1px solid #63b3ed;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.8), transparent);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .result-card.safe {
+            background: linear-gradient(145deg, rgba(72, 187, 120, 0.15) 0%, rgba(72, 187, 120, 0.05) 100%);
+            border-left-color: #68d391;
+            border-color: #68d391;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(104, 211, 145, 0.2),
+                inset 0 1px 0 rgba(104, 211, 145, 0.2);
+        }
+
+        .result-card.safe::before {
+            background: linear-gradient(90deg, transparent, rgba(104, 211, 145, 0.8), transparent);
+        }
+
+        .result-card.warning {
+            background: linear-gradient(145deg, rgba(246, 173, 85, 0.15) 0%, rgba(246, 173, 85, 0.05) 100%);
+            border-left-color: #f6ad55;
+            border-color: #f6ad55;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(246, 173, 85, 0.2),
+                inset 0 1px 0 rgba(246, 173, 85, 0.2);
+        }
+
+        .result-card.warning::before {
+            background: linear-gradient(90deg, transparent, rgba(246, 173, 85, 0.8), transparent);
+        }
+
+        .result-card.danger {
+            background: linear-gradient(145deg, rgba(245, 101, 101, 0.15) 0%, rgba(245, 101, 101, 0.05) 100%);
+            border-left-color: #f56565;
+            border-color: #f56565;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(245, 101, 101, 0.2),
+                inset 0 1px 0 rgba(245, 101, 101, 0.2);
+        }
+
+        .result-card.danger::before {
+            background: linear-gradient(90deg, transparent, rgba(245, 101, 101, 0.8), transparent);
+        }
+
+        .result-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            color: #e2e8f0;
+        }
+
+        .result-icon {
+            margin-right: 15px;
+            font-size: 1.8rem;
+        }
+
+        .transcript {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #63b3ed;
+            font-style: italic;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .probability-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .probability-bar {
+            background: #2d3748;
+            height: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-grow: 1;
+            margin-right: 20px;
+            border: 1px solid #4a5568;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .probability-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        .probability-fill {
+            height: 100%;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .probability-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: fillShimmer 2s infinite;
+        }
+
+        @keyframes fillShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .probability-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            color: #e2e8f0;
+        }
+
+        .warnings {
+            margin-top: 20px;
+        }
+
+        .warning-item {
+            background: rgba(245, 101, 101, 0.2);
+            color: #f56565;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.95rem;
+            border-left: 3px solid #f56565;
+        }
+
+        .analysis-details {
+            margin-top: 20px;
+            background: #4a5568;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #63b3ed;
+        }
+
+        .detail-section {
+            margin: 15px 0;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #63b3ed;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .keyword-list {
+            background: #2d3748;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+        }
+
+        .error {
+            display: none;
+            background: rgba(245, 101, 101, 0.2);
+            border: 2px solid #f56565;
+            color: #f56565;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .history-sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .content-area {
+                order: 1;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+            }
+            
+            .sample-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="content-area">
+            <div class="header">
+                <h1>Advanced Neural Threat Detection & Analysis System</h1>
+            </div>
+            
+            <div class="main-content">
+                <!-- Neural Text Analysis Section -->
+                <div class="text-analysis-card">
+                    <div class="section-title">Neural Text Analysis</div>
+                    <p style="color: #a0aec0; margin-bottom: 25px; font-size: 1rem;">
+                        Paste suspicious message, transcript, or communication for AI analysis...
+                    </p>
+                    
+                    <textarea id="textInput" placeholder="Paste suspicious message, transcript, or communication for AI analysis..."></textarea>
+                    
+                    <div class="sample-buttons">
+                        <small>Quick test samples:</small>
+                        <button type="button" class="btn btn-small sample-btn safe" onclick="document.getElementById('textInput').value='Hello, this is just a normal conversation about the weather today. How are you doing?'">
+                            ✅ Load Safe Sample
+                        </button>
+                        <button type="button" class="btn btn-small sample-btn scam" onclick="document.getElementById('textInput').value='URGENT! Your bank account has been compromised. We need to verify your card number and CVV code immediately to protect your account from fraud. Which card are you using, Visa or Mastercard?'">
+                            🚨 Load Threat Sample
+                        </button>
+                    </div>
+                    
+                    <button class="btn" id="analyzeTextBtn">
+                        ⚡ INITIATE NEURAL SCAN
+                    </button>
+                </div>
+
+                <!-- Voice Pattern Analysis Section -->
+                <div class="audio-analysis-card">
+                    <div class="section-title" style="margin-bottom: 20px;">Voice Pattern Analysis</div>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">🎤</div>
+                        <div class="upload-text">Deploy Audio Sample</div>
+                        <div class="upload-subtext">Drop voice recording or click to select<br>
+                        Supported: MP3, WAV, M4A, FLAC • Max: 50MB</div>
+                    </div>
+                    
+                    <input type="file" id="audioFile" accept="audio/*">
+                    
+                    <div class="filename" id="filename" style="display: none; color: #63b3ed; margin: 20px 0; padding: 15px; background: rgba(99, 179, 237, 0.1); border-radius: 8px; border: 1px solid #63b3ed;"></div>
+                    
+                    <button class="btn" id="analyzeBtn" style="display: none;">
+                        🔬 PROCESS AUDIO SIGNATURE
+                    </button>
+                    
+                    <button class="btn btn-record" id="recordBtn">
+                        🎤 RECORD VOICE
+                    </button>
+                    
+                    <div class="recording-status" id="recordingStatus" style="display: none;">
+                        <div class="recording-indicator">
+                            <div class="pulse-dot"></div>
+                            <span id="recordingText">Recording...</span>
+                            <span id="recordingTimer">0s</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="color: #63b3ed; font-size: 1.1rem;">Processing neural analysis...</p>
+                </div>
+                
+                <div class="error" id="error"></div>
+        
+                <div class="results" id="results">
+                    <div class="result-card" id="mainResult">
+                        <div class="result-header">
+                            <span class="result-icon" id="resultIcon"></span>
+                            <span id="resultTitle"></span>
+                        </div>
+                        
+                        <div class="transcript" id="transcriptSection">
+                            <strong>📝 Transcript:</strong>
+                            <p id="transcriptText"></p>
+                        </div>
+                        
+                        <div class="probability-display">
+                            <div class="probability-bar">
+                                <div class="probability-fill" id="probabilityFill"></div>
+                            </div>
+                            <span class="probability-text" id="probabilityText">0%</span>
+                        </div>
+                        
+                        <div id="recommendationText" style="margin-top: 15px; font-weight: 500; color: #e2e8f0;"></div>
+                    </div>
+                    
+                    <div class="warnings" id="warningsSection" style="display: none;">
+                        <h4 style="color: #f56565; margin-bottom: 10px;">⚠️ Detected Warning Signs:</h4>
+                        <div id="warningsList"></div>
+                    </div>
+                    
+                    <div class="analysis-details" id="analysisDetails" style="display: none;">
+                        <h4 style="color: #63b3ed; margin-bottom: 15px;">📊 Analysis Details</h4>
+                        
+                        <div class="detail-section">
+                            <div class="detail-label">Detected Keywords:</div>
+                            <div class="keyword-list" id="keywordsList">None detected</div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-label">Critical Phrases:</div>
+                            <div class="keyword-list" id="criticalPhrases">None detected</div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-label">Pattern Analysis:</div>
+                            <div class="keyword-list" id="patternsList">None detected</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" id="resetBtn" style="display: none;">🔄 Analyze Another File</button>
+            </div>
+        </div>
+
+        <!-- History Sidebar -->
+        <div class="history-sidebar">
+            <div class="history-header">
+                <div class="history-title">Analysis History</div>
+                <div class="history-stats">
+                    <div>Recent threat assessments</div>
+                    <div><strong>Total Scans:</strong> <span id="totalScans">2</span></div>
+                    <div><strong>Threats Detected:</strong> <span id="threatsDetected">1</span></div>
+                    <div><strong>Success Rate:</strong> <span id="successRate">50%</span></div>
+                </div>
+                <button class="clear-history-btn" onclick="clearHistory()">🗑 CLEAR ALL HISTORY</button>
+            </div>
+            
+            <div class="history-items" id="historyItems">
+                <!-- Sample history items -->
+                <div class="history-item safe">
+                    <div class="history-item-risk safe">0% SAFE</div>
+                    <div class="history-item-filename">🎵 scamcall2 (online-audio-converter.com).mp3</div>
+                    <div class="history-item-percent">LOW RISK - APPEARS SAFE</div>
+                </div>
+                
+                <div class="history-item danger">
+                    <div class="history-item-risk danger">98% DANGER</div>
+                    <div class="history-item-filename">🎵 sampleaa.mp3</div>
+                    <div class="history-item-percent">HIGH RISK - LIKELY SCAM</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Error boundary for JavaScript
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript Error:', e.error);
+            console.error('Stack:', e.error ? e.error.stack : 'No stack trace available');
+        });
+        
+        // Global variables
+        const uploadArea = document.getElementById('uploadArea');
+        const audioFile = document.getElementById('audioFile');
+        const filename = document.getElementById('filename');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const analyzeTextBtn = document.getElementById('analyzeTextBtn');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const results = document.getElementById('results');
+        const resetBtn = document.getElementById('resetBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const recordingStatus = document.getElementById('recordingStatus');
+        const recordingText = document.getElementById('recordingText');
+        const recordingTimer = document.getElementById('recordingTimer');
+        
+        // Recording variables
+        let mediaRecorder;
+        let recordedChunks = [];
+        let recordingInterval;
+        let recordingStartTime;
+        let isRecording = false;
+        
+        // History management
+        let analysisHistory = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
+        
+        // Initialize history display
+        updateHistoryDisplay();
+        
+        uploadArea.addEventListener('click', () => {
+            audioFile.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                audioFile.files = files;
+                handleFileSelect();
+            }
+        });
+        
+        audioFile.addEventListener('change', handleFileSelect);
+        
+        function handleFileSelect() {
+            const file = audioFile.files[0];
+            if (file) {
+                filename.textContent = '📁 Selected: ' + file.name;
+                filename.style.display = 'block';
+                analyzeBtn.style.display = 'inline-block';
+                hideResults();
+            }
+        }
+        
+        analyzeBtn.addEventListener('click', analyzeAudio);
+        analyzeTextBtn.addEventListener('click', analyzeText);
+        resetBtn.addEventListener('click', resetForm);
+        recordBtn.addEventListener('click', toggleRecording);
+        
+        function analyzeText() {
+            const text = document.getElementById('textInput').value.trim();
+            if (!text) {
+                showError('Please enter some text to analyze.');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            analyzeTextBtn.style.display = 'none';
+            hideResults();
+            hideError();
+            
+            fetch('/api/analyze-text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                analyzeTextBtn.style.display = 'inline-block';
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showResults(data);
+                }
+            })
+            .catch(err => {
+                loading.style.display = 'none';
+                analyzeTextBtn.style.display = 'inline-block';
+                showError('Network error: ' + err.message);
+            });
+        }
+        
+        function analyzeAudio() {
+            const file = audioFile.files[0];
+            if (!file) {
+                showError('Please select an audio file first.');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('audio', file);
+            
+            loading.style.display = 'block';
+            analyzeBtn.style.display = 'none';
+            hideResults();
+            hideError();
+            
+            fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showResults(data);
+                }
+            })
+            .catch(err => {
+                loading.style.display = 'none';
+                showError('Network error: ' + err.message);
+            });
+        }
+        
+        function showResults(data) {
+            const scam_probability = data.scam_probability || 0;
+            const transcript = data.transcript || '';
+            const risk_level = data.risk_level || '';
+            const recommendation = data.recommendation || '';
+            const warnings = data.warnings || [];
+            const analysis_details = data.analysis_details || {};
+            
+            // Add to history
+            const historyItem = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                filename: audioFile.files[0] ? audioFile.files[0].name : 'Text Analysis',
+                type: audioFile.files[0] ? 'audio' : 'text',
+                scam_probability,
+                risk_level,
+                transcript: transcript.substring(0, 100) + (transcript.length > 100 ? '...' : '')
+            };
+            
+            analysisHistory.unshift(historyItem);
+            if (analysisHistory.length > 10) analysisHistory.pop(); // Keep only 10 items
+            localStorage.setItem('analysisHistory', JSON.stringify(analysisHistory));
+            updateHistoryDisplay();
+            
+            document.getElementById('transcriptText').textContent = transcript;
+            
+            const probabilityPercent = Math.round(scam_probability * 100);
+            document.getElementById('probabilityText').textContent = probabilityPercent + '%';
+            
+            const probabilityFill = document.getElementById('probabilityFill');
+            probabilityFill.style.width = probabilityPercent + '%';
+            
+            const mainResult = document.getElementById('mainResult');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const recommendationText = document.getElementById('recommendationText');
+            
+            if (scam_probability >= 0.6) {
+                mainResult.className = 'result-card danger';
+                resultIcon.textContent = '🔴';
+                resultTitle.textContent = risk_level || 'HIGH RISK - LIKELY SCAM';
+                probabilityFill.style.backgroundColor = '#f56565';
+            } else if (scam_probability >= 0.4) {
+                mainResult.className = 'result-card warning';
+                resultIcon.textContent = '🟡';
+                resultTitle.textContent = risk_level || 'MEDIUM RISK - SUSPICIOUS';
+                probabilityFill.style.backgroundColor = '#f6ad55';
+            } else {
+                mainResult.className = 'result-card safe';
+                resultIcon.textContent = '🟢';
+                resultTitle.textContent = risk_level || 'LOW RISK - APPEARS SAFE';
+                probabilityFill.style.backgroundColor = '#68d391';
+            }
+            
+            if (recommendation) {
+                recommendationText.textContent = recommendation;
+            }
+            
+            if (warnings && warnings.length > 0) {
+                const warningsSection = document.getElementById('warningsSection');
+                const warningsList = document.getElementById('warningsList');
+                warningsList.innerHTML = warnings.map(warning => 
+                    '<div class="warning-item" style="background: rgba(245, 101, 101, 0.2); border-left: 3px solid #f56565; color: #f56565;">' + warning + '</div>'
+                ).join('');
+                warningsSection.style.display = 'block';
+            }
+            
+            if (analysis_details) {
+                const analysisDetails = document.getElementById('analysisDetails');
+                
+                if (analysis_details.detected_keywords && analysis_details.detected_keywords.length > 0) {
+                    document.getElementById('keywordsList').textContent = analysis_details.detected_keywords.join(', ');
+                }
+                
+                if (analysis_details.critical_phrases && analysis_details.critical_phrases.length > 0) {
+                    document.getElementById('criticalPhrases').textContent = analysis_details.critical_phrases.join(', ');
+                }
+                
+                if (analysis_details.patterns && analysis_details.patterns.length > 0) {
+                    document.getElementById('patternsList').textContent = analysis_details.patterns.join(', ');
+                }
+                
+                analysisDetails.style.display = 'block';
+            }
+            
+            results.style.display = 'block';
+            resetBtn.style.display = 'inline-block';
+        }
+        
+        function updateHistoryDisplay() {
+            try {
+                const historyItems = document.getElementById('historyItems');
+                const totalScans = document.getElementById('totalScans');
+                const threatsDetected = document.getElementById('threatsDetected');
+                const successRate = document.getElementById('successRate');
+                
+                if (!historyItems) return; // History section not loaded yet
+                
+                // Update stats safely
+                const total = analysisHistory.length;
+                const threats = analysisHistory.filter(item => item.scam_probability >= 0.5).length;
+                const rate = total > 0 ? Math.round(((total - threats) / total) * 100) : 100;
+                
+                if (totalScans) totalScans.textContent = total;
+                if (threatsDetected) threatsDetected.textContent = threats;
+                if (successRate) successRate.textContent = rate + '%';
+                
+                // Update history items
+                if (analysisHistory.length === 0) {
+                    historyItems.innerHTML = '<div style="color: #a0aec0; text-align: center; padding: 20px;">No analysis history yet</div>';
+                    return;
+                }
+            } catch (error) {
+                console.error('Error updating history display:', error);
+            }
+            
+            historyItems.innerHTML = analysisHistory.map(item => {
+                const riskClass = item.scam_probability >= 0.5 ? 'danger' : 'safe';
+                const riskText = item.scam_probability >= 0.5 ? 'DANGER' : 'SAFE';
+                const icon = item.type === 'audio' ? '🎵' : '📝';
+                const percent = Math.round(item.scam_probability * 100);
+                
+                return `
+                    <div class="history-item ${riskClass}">
+                        <div class="history-item-risk ${riskClass}">${percent}% ${riskText}</div>
+                        <div class="history-item-filename">${icon} ${item.filename}</div>
+                        <div class="history-item-percent">${item.risk_level || 'Analysis Complete'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function clearHistory() {
+            if (confirm('Clear all analysis history?')) {
+                analysisHistory = [];
+                localStorage.removeItem('analysisHistory');
+                updateHistoryDisplay();
+            }
+        }
+        
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+            analyzeBtn.style.display = audioFile.files.length > 0 ? 'inline-block' : 'none';
+            analyzeTextBtn.style.display = 'inline-block';
+        }
+        
+        function hideError() {
+            error.style.display = 'none';
+        }
+        
+        function hideResults() {
+            results.style.display = 'none';
+            document.getElementById('warningsSection').style.display = 'none';
+            document.getElementById('analysisDetails').style.display = 'none';
+            error.style.display = 'none';
+        }
+        
+        // Recording Functions
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                await startRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                // Check for browser support
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('MediaRecorder API not supported in this browser');
+                }
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100
+                    } 
+                });
+                
+                recordedChunks = [];
+                
+                // Check MediaRecorder support
+                let mimeType = 'audio/webm;codecs=opus';
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'audio/webm';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'audio/mp4';
+                        if (!MediaRecorder.isTypeSupported(mimeType)) {
+                            mimeType = '';
+                        }
+                    }
+                }
+                
+                mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+                    await processRecordedAudio(audioBlob);
+                    
+                    // Stop all tracks
+                    stream.getTracks().forEach(track => track.stop());
+                };
+                
+                // Start recording
+                mediaRecorder.start();
+                isRecording = true;
+                recordingStartTime = Date.now();
+                
+                // Update UI
+                recordBtn.textContent = '⏹️ STOP RECORDING';
+                recordBtn.classList.add('recording');
+                recordingStatus.style.display = 'block';
+                recordingText.textContent = 'Recording...';
+                
+                // Start timer
+                recordingInterval = setInterval(updateRecordingTimer, 100);
+                
+                // Auto-stop after 3 minutes (180 seconds)
+                setTimeout(() => {
+                    if (isRecording) {
+                        stopRecording();
+                    }
+                }, 180000);
+                
+                // Warn at 2:30 minutes
+                setTimeout(() => {
+                    if (isRecording) {
+                        recordingText.textContent = 'Recording... (30 seconds left)';
+                        recordingTimer.style.color = '#f39c12';
+                    }
+                }, 180000); // 3 minutes maximum recording time
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                showError('Microphone access denied. Please allow microphone permissions and try again.');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Update UI
+                recordBtn.textContent = '🎤 RECORD VOICE';
+                recordBtn.classList.remove('recording');
+                recordingStatus.style.display = 'none';
+                
+                // Clear timer
+                if (recordingInterval) {
+                    clearInterval(recordingInterval);
+                }
+            }
+        }
+
+        function updateRecordingTimer() {
+            if (isRecording) {
+                const elapsed = (Date.now() - recordingStartTime) / 1000;
+                recordingTimer.textContent = elapsed.toFixed(1) + 's';
+                
+                // Change text color as we approach the 3-minute limit
+                if (elapsed > 170) {
+                    recordingTimer.style.color = '#e74c3c';  // Red color warning
+                    recordingText.textContent = 'Recording... (auto-stop in 10s)';
+                } else if (elapsed > 150) {
+                    recordingTimer.style.color = '#f39c12';
+                    recordingText.textContent = 'Recording... (30 seconds left)';
+                } else {
+                    recordingTimer.style.color = '#68d391';
+                    recordingText.textContent = 'Recording in progress...';
+                }
+            }
+        }
+
+        async function processRecordedAudio(audioBlob) {
+            try {
+                // Show analyzing status
+                recordingText.textContent = 'Converting audio...';
+                recordingStatus.style.display = 'block';
+                
+                // Convert to WAV format
+                const wavBlob = await convertToWAV(audioBlob);
+                
+                // Create form data
+            const formData = new FormData();
+            formData.append('audio', wavBlob, 'recording.wav');                // Update status
+                recordingText.textContent = 'Analyzing...';
+                loading.style.display = 'block';
+                hideResults();
+                hideError();
+                
+                // Add placeholder in history
+                const placeholderItem = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    filename: 'Voice Recording',
+                    type: 'audio',
+                    status: 'analyzing'
+                };
+                
+                // Send to server
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading states
+                loading.style.display = 'none';
+                recordingStatus.style.display = 'none';
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showResults(data);
+                    // Update history silently - don't throw errors if it fails
+                    try {
+                        // Add analysis to history if we have a valid result
+                        if (data.scam_probability !== undefined) {
+                            const historyItem = {
+                                id: Date.now(),
+                                timestamp: new Date().toISOString(),
+                                filename: 'Voice Recording',
+                                type: 'audio',
+                                scam_probability: data.scam_probability,
+                                risk_level: data.risk_level,
+                                transcript: data.transcript ? (data.transcript.substring(0, 100) + '...') : ''
+                            };
+                            analysisHistory.unshift(historyItem);
+                            if (analysisHistory.length > 10) analysisHistory.pop();
+                            localStorage.setItem('analysisHistory', JSON.stringify(analysisHistory));
+                            updateHistoryDisplay();
+                        }
+                    } catch (historyError) {
+                        console.log('Non-critical: Could not update history:', historyError);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error processing recording:', error);
+                loading.style.display = 'none';
+                recordingStatus.style.display = 'none';
+                showError('Error processing recording: ' + error.message);
+            }
+        }
+
+        async function convertToWAV(audioBlob) {
+            return new Promise((resolve, reject) => {
+                try {
+                    // Check for Web Audio API support
+                    if (!window.AudioContext && !window.webkitAudioContext) {
+                        console.warn('Web Audio API not supported, sending original blob');
+                        resolve(audioBlob);
+                        return;
+                    }
+                    
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const fileReader = new FileReader();
+                    
+                    fileReader.onerror = (error) => {
+                        console.error('FileReader error:', error);
+                        resolve(audioBlob); // Fallback to original
+                    };
+                    
+                    fileReader.onload = async (e) => {
+                        try {
+                            const arrayBuffer = e.target.result;
+                            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                            
+                            // Create WAV file
+                            const wavBuffer = audioBufferToWav(audioBuffer);
+                            const wavBlob = new Blob([wavBuffer], { type: 'audio/wav' });
+                            resolve(wavBlob);
+                        } catch (error) {
+                            console.error('Error converting audio:', error);
+                            // Fallback: return original blob
+                            resolve(audioBlob);
+                        }
+                    };
+                    
+                    fileReader.readAsArrayBuffer(audioBlob);
+                } catch (error) {
+                    console.error('convertToWAV error:', error);
+                    resolve(audioBlob); // Fallback
+                }
+            });
+        }
+
+        function audioBufferToWav(buffer) {
+            const length = buffer.length;
+            const arrayBuffer = new ArrayBuffer(44 + length * 2);
+            const view = new DataView(arrayBuffer);
+            const channels = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            
+            // WAV header
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+            
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + length * 2, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, channels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, length * 2, true);
+            
+            // Convert audio data
+            const channelData = buffer.getChannelData(0);
+            let offset = 44;
+            for (let i = 0; i < length; i++) {
+                const sample = Math.max(-1, Math.min(1, channelData[i]));
+                view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+                offset += 2;
+            }
+            
+            return arrayBuffer;
+        }
+
+        function resetForm() {
+            audioFile.value = '';
+            filename.style.display = 'none';
+            analyzeBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+            document.getElementById('textInput').value = '';
+            analyzeTextBtn.style.display = 'inline-block';
+            hideResults();
+            
+            // Reset recording state
+            if (isRecording) {
+                stopRecording();
+            }
+            recordingStatus.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
