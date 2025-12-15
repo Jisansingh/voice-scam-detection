@@ -202,20 +202,6 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
 ✅ **Dashboard/logging** - Beautiful UI with analysis history  
 ✅ **Demo with simulated scenarios** - Sample texts and audio files  
 
-## 🏆 Hackathon Ready
 
-This project is **competition-ready** with:
-- Complete functionality
-- Professional UI/UX
-- Production deployment capability
-- Comprehensive documentation
-- Real-world applicability
-
-## 📞 Contact
-
-Built for [Hackathon Name] - Cybersecurity Track
-Team: [Your Team Name]
-
----
 
 **⚡ Protecting users from voice-based financial scams with AI-powered analysis**
