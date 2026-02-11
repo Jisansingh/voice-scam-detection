@@ -6,7 +6,7 @@ Serves HTML templates and provides API endpoints
 
 import sys
 import os
-sys.path.append('/Users/jssingh/cybcup')
+# sys.path.append('/Users/jssingh/cybcup')  # Removed absolute path dependency
 
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import joblib
@@ -54,8 +54,10 @@ def load_model():
     global model, vectorizer
     
     try:
-        model_path = '/Users/jssingh/cybcup/model/scam_model.pkl'
-        vectorizer_path = '/Users/jssingh/cybcup/model/vectorizer.pkl'
+        # Use relative paths for portability
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(base_dir, 'model', 'scam_model.pkl')
+        vectorizer_path = os.path.join(base_dir, 'model', 'vectorizer.pkl')
         
         if os.path.exists(model_path) and os.path.exists(vectorizer_path):
             model = joblib.load(model_path)
@@ -335,7 +337,7 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     """Serve the main scam detection dashboard"""
-    # Check if user is logged in
+    # Enforce authentication
     if 'user_phone' not in session:
         return redirect(url_for('login'))
     return render_template('index_enhanced.html')
