@@ -10,8 +10,7 @@ click==8.1.7
 
 # ML Model Loading
 numpy==1.26.4
-scipy==1.11.4
-scikit-learn==1.7.2
+scikit-learn==1.4.2
 joblib==1.5.2
 
 # Audio Processing
