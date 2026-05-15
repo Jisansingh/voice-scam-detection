@@ -9,8 +9,8 @@ itsdangerous==2.2.0
 click==8.1.7
 
 # ML Model Loading
-numpy==2.2.0
-scipy==1.15.1
+numpy==1.26.4
+scipy==1.11.4
 scikit-learn==1.7.2
 joblib==1.5.2
 
