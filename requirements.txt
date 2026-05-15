@@ -10,7 +10,6 @@ click==8.1.7
 
 # ML Model Loading
 numpy==2.2.0
-scipy==1.14.1
 scikit-learn==1.5.2
 joblib==1.5.2
 
