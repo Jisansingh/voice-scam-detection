@@ -1,36 +1,13 @@
-# Core Web Framework
-Flask==3.1.2
-flask-cors==6.0.1
-Flask-Session==0.8.0
-Werkzeug==3.1.3
-Jinja2==3.1.6
-MarkupSafe==3.0.3
-itsdangerous==2.2.0
-click==8.1.7
+Flask
+flask-cors
+Flask-Session
+gunicorn
 
-# ML Model Loading
 numpy==1.26.4
 scikit-learn==1.3.2
 joblib==1.3.2
 
-# Audio Processing
-pydub==0.25.1
+pydub
+SpeechRecognition
 
-# Transcription (optional - falls back to SpeechRecognition)
-SpeechRecognition==3.14.3
-
-# Production Server
-gunicorn==23.0.0
-
-# Utilities
-python-dateutil==2.9.0.post0
-pytz==2025.2
-urllib3==2.5.0
-requests==2.32.5
-certifi==2025.4.26
-charset-normalizer==3.4.1
-idna==3.10
-
-# Keep these for compatibility but pinned
-six==1.17.0
-threadpoolctl==3.6.0
+requests
