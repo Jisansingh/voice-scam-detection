@@ -390,20 +390,18 @@ def predict_scam(text):
     """Make prediction using the trained model"""
     if not model or not vectorizer:
         return {'error': 'Model not loaded'}
-    
+
     try:
         # Preprocess text
         processed_text = preprocess_text(text)
-        
+
         # Transform text using vectorizer
-        X_tfidf = vectorizer.transform([processed_text])
-        
-        # Extract custom features
-        custom_features = extract_custom_features([text])
-        
-        # Combine features
-        X = np.hstack((X_tfidf.toarray(), custom_features))
-        
+        X = vectorizer.transform([processed_text])
+
+        # Debug logging for feature dimensions
+        print(f"🔍 Prediction feature shape: {X.shape}")
+        print(f"🔍 Model expects: {model.n_features_in_} features")
+
         # Get prediction and probability
         prediction = model.predict(X)[0]
         probability = model.predict_proba(X)[0][1]  # Probability of being scam (0 to 1)
