@@ -6,7 +6,7 @@ Serves HTML templates and provides API endpoints
 
 import sys
 import os
-sys.path.append('/Users/jssingh/cybcup')
+# sys.path.append('/Users/jssingh/cybcup')  # Removed absolute path dependency
 
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import joblib
@@ -15,6 +15,14 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 import io
 import tempfile
+import datetime
+
+# Get library versions for diagnostics
+try:
+    import sklearn
+    SKLEARN_VERSION = sklearn.__version__
+except ImportError:
+    SKLEARN_VERSION = 'unknown'
 
 # Audio processing imports
 try:
@@ -48,26 +56,138 @@ app.secret_key = 'cybcup_scam_detection_2024'  # Change this in production
 # Global variables for model and vectorizer
 model = None
 vectorizer = None
+model_load_error = None
+model_load_details = {}
 
 def load_model():
-    """Load the trained model and vectorizer"""
-    global model, vectorizer
-    
+    """
+    Robust model loading with comprehensive diagnostics.
+    Works with both 'python web_app.py' and gunicorn.
+    """
+    global model, vectorizer, model_load_error, model_load_details
+
+    import platform
+
+    diagnostics = {
+        'platform': platform.system(),
+        'python_version': platform.python_version(),
+        'cwd': os.getcwd(),
+        'app_path': __file__,
+        'app_dir': os.path.dirname(os.path.abspath(__file__)),
+    }
+
+    print("=" * 60)
+    print("🔍 MODEL LOADING DIAGNOSTICS")
+    print("=" * 60)
+
+    # Step 1: Determine paths
     try:
-        model_path = '/Users/jssingh/cybcup/model/scam_model.pkl'
-        vectorizer_path = '/Users/jssingh/cybcup/model/vectorizer.pkl'
-        
-        if os.path.exists(model_path) and os.path.exists(vectorizer_path):
-            model = joblib.load(model_path)
-            vectorizer = joblib.load(vectorizer_path)
-            print("✅ Model loaded successfully!")
-            return True
-        else:
-            print("❌ Model files not found!")
-            return False
+        app_dir = os.path.dirname(os.path.abspath(__file__))
+        if not app_dir:
+            app_dir = os.getcwd()
+        diagnostics['app_dir'] = app_dir
+        print(f"📂 App directory: {app_dir}")
+
+        # Check if running in gunicorn context (different cwd)
+        if os.getcwd() != app_dir:
+            print(f"⚠️ Working directory differs: {os.getcwd()}")
+            diagnostics['cwd_differs'] = True
+
     except Exception as e:
-        print(f"❌ Error loading model: {e}")
-        return False
+        print(f"❌ Could not determine app directory: {e}")
+        diagnostics['app_dir_error'] = str(e)
+
+    # Step 2: Check model files exist
+    model_dir = os.path.join(app_dir, 'model')
+
+    print(f"\n📁 Checking model directory: {model_dir}")
+    diagnostics['model_dir'] = model_dir
+    diagnostics['model_dir_exists'] = os.path.exists(model_dir)
+
+    if os.path.exists(model_dir):
+        print(f"✅ Model directory exists")
+        files = os.listdir(model_dir)
+        print(f"📄 Files in model dir: {files}")
+        diagnostics['model_dir_files'] = files
+    else:
+        print(f"❌ Model directory NOT FOUND")
+        # Try alternative locations
+        for alt_path in ['model', '../model', './model']:
+            alt_full = os.path.join(app_dir, alt_path)
+            if os.path.exists(alt_full):
+                print(f"✅ Found model at alternative: {alt_full}")
+                model_dir = alt_full
+                diagnostics['model_dir_found_at'] = alt_full
+                break
+
+    # Step 3: Check specific model files
+    model_path = os.path.join(model_dir, 'scam_model.pkl')
+    vectorizer_path = os.path.join(model_dir, 'vectorizer.pkl')
+
+    print(f"\n🔍 Checking model files:")
+    print(f"   - scam_model.pkl: {model_path}")
+    print(f"     Exists: {os.path.exists(model_path)}")
+    print(f"     Size: {os.path.getsize(model_path) if os.path.exists(model_path) else 'N/A'} bytes")
+
+    print(f"   - vectorizer.pkl: {vectorizer_path}")
+    print(f"     Exists: {os.path.exists(vectorizer_path)}")
+    print(f"     Size: {os.path.getsize(vectorizer_path) if os.path.exists(vectorizer_path) else 'N/A'} bytes")
+
+    diagnostics['scam_model_exists'] = os.path.exists(model_path)
+    diagnostics['vectorizer_exists'] = os.path.exists(vectorizer_path)
+
+    if os.path.exists(model_path):
+        diagnostics['scam_model_size'] = os.path.getsize(model_path)
+    if os.path.exists(vectorizer_path):
+        diagnostics['vectorizer_size'] = os.path.getsize(vectorizer_path)
+
+    # Step 4: Load model if files exist
+    if os.path.exists(model_path) and os.path.exists(vectorizer_path):
+        print(f"\n✅ Model files found - attempting to load...")
+
+        try:
+            # Load scam model
+            print(f"   Loading scam_model.pkl...")
+            model = joblib.load(model_path)
+            print(f"   ✅ scam_model loaded: {type(model)}")
+            diagnostics['model_loaded'] = True
+
+            # Load vectorizer
+            print(f"   Loading vectorizer.pkl...")
+            vectorizer = joblib.load(vectorizer_path)
+            print(f"   ✅ vectorizer loaded: {type(vectorizer)}")
+            diagnostics['vectorizer_loaded'] = True
+
+            print(f"\n🎉 MODEL LOADING SUCCESSFUL!")
+            model_load_error = None
+
+        except Exception as e:
+            print(f"\n❌ MODEL LOADING FAILED!")
+            print(f"   Error: {type(e).__name__}: {e}")
+            model_load_error = f"{type(e).__name__}: {str(e)}"
+            diagnostics['load_error'] = str(e)
+            diagnostics['model_loaded'] = False
+            diagnostics['vectorizer_loaded'] = False
+    else:
+        print(f"\n❌ Model files NOT FOUND!")
+        model_load_error = "Model files not found in model directory"
+        diagnostics['model_loaded'] = False
+        diagnostics['vectorizer_loaded'] = False
+
+    # Step 5: Print sklearn/numpy versions
+    print(f"\n📊 Library versions:")
+    print(f"   - sklearn: {SKLEARN_VERSION}")
+    print(f"   - numpy: {np.__version__}")
+    print(f"   - joblib: {joblib.__version__}")
+    diagnostics['sklearn_version'] = SKLEARN_VERSION
+    diagnostics['numpy_version'] = np.__version__
+    diagnostics['joblib_version'] = joblib.__version__
+
+    print("=" * 60)
+
+    model_load_details = diagnostics
+
+    return model is not None and vectorizer is not None
 
 def preprocess_text(text):
     """Basic text preprocessing"""
@@ -270,20 +390,18 @@ def predict_scam(text):
     """Make prediction using the trained model"""
     if not model or not vectorizer:
         return {'error': 'Model not loaded'}
-    
+
     try:
         # Preprocess text
         processed_text = preprocess_text(text)
-        
+
         # Transform text using vectorizer
-        X_tfidf = vectorizer.transform([processed_text])
-        
-        # Extract custom features
-        custom_features = extract_custom_features([text])
-        
-        # Combine features
-        X = np.hstack((X_tfidf.toarray(), custom_features))
-        
+        X = vectorizer.transform([processed_text])
+
+        # Debug logging for feature dimensions
+        print(f"🔍 Prediction feature shape: {X.shape}")
+        print(f"🔍 Model expects: {model.n_features_in_} features")
+
         # Get prediction and probability
         prediction = model.predict(X)[0]
         probability = model.predict_proba(X)[0][1]  # Probability of being scam (0 to 1)
@@ -335,7 +453,7 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     """Serve the main scam detection dashboard"""
-    # Check if user is logged in
+    # Enforce authentication
     if 'user_phone' not in session:
         return redirect(url_for('login'))
     return render_template('index_enhanced.html')
@@ -402,12 +520,35 @@ def api_logout():
 
 @app.route('/health', methods=['GET'])
 def health():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'model_loaded': model is not None and vectorizer is not None,
-        'server': 'cybcup_web_app_v1.0'
-    })
+    """Production-grade health check with detailed diagnostics."""
+    # Get current model status
+    model_loaded = model is not None and vectorizer is not None
+
+    # Build detailed status
+    status = {
+        'status': 'healthy' if model_loaded else 'degraded',
+        'model_loaded': model_loaded,
+        'model_load_error': model_load_error,
+        'environment': os.environ.get('FLASK_ENV', 'development'),
+        'debug_mode': app.debug,
+        'server_version': 'v1.1',
+        'timestamp': datetime.datetime.now().isoformat()
+    }
+
+    # Add diagnostic info if model not loaded (helps debugging)
+    if not model_loaded and model_load_details:
+        status['diagnostics'] = {
+            'cwd': model_load_details.get('cwd', 'unknown'),
+            'app_dir': model_load_details.get('app_dir', 'unknown'),
+            'model_dir': model_load_details.get('model_dir', 'unknown'),
+            'model_dir_exists': model_load_details.get('model_dir_exists', False),
+            'scam_model_exists': model_load_details.get('scam_model_exists', False),
+            'vectorizer_exists': model_load_details.get('vectorizer_exists', False),
+            'sklearn_version': model_load_details.get('sklearn_version', 'unknown'),
+            'numpy_version': model_load_details.get('numpy_version', 'unknown'),
+        }
+
+    return jsonify(status)
 
 @app.route('/test-text', methods=['POST'])
 def analyze_text_legacy():
@@ -416,37 +557,77 @@ def analyze_text_legacy():
 
 @app.route('/api/analyze-text', methods=['POST'])
 def analyze_text():
-    """Text analysis endpoint for the dashboard"""
+    """Text analysis endpoint with graceful fallback when model unavailable."""
     try:
         if not request.is_json:
             return jsonify({'error': 'Content-Type must be application/json'}), 400
-        
+
         data = request.get_json()
         if not data or 'text' not in data:
             return jsonify({'error': 'Missing text field'}), 400
-        
+
         text = str(data['text']).strip()
         if len(text) < 1:
             return jsonify({'error': 'Empty text'}), 400
-        
+
+        # Check model availability - use fallback if not loaded
+        if model is None or vectorizer is None:
+            # Fallback: Keyword-based analysis when model unavailable
+            print("⚠️ Model not loaded - using keyword-based fallback")
+
+            text_lower = text.lower()
+            keywords_found = []
+
+            # Basic keyword detection
+            scam_keywords = {
+                'urgent': 3, 'immediately': 3, 'block': 2, 'suspend': 2,
+                'account': 2, 'card': 2, 'cvv': 5, 'pin': 5, 'otp': 5,
+                'password': 4, 'security': 3, 'bank': 2, 'lottery': 4,
+                'prize': 3, 'won': 3, 'refund': 2, 'verify': 2
+            }
+
+            for kw, weight in scam_keywords.items():
+                if kw in text_lower:
+                    keywords_found.append(f"{kw} (+{weight})")
+
+            keyword_score = sum(scam_keywords.get(w, 0) for w in text_lower.split())
+            percentage = min(100, keyword_score * 5)
+
+            risk_level = "HIGH RISK" if percentage >= 50 else "MEDIUM RISK" if percentage >= 25 else "LOW RISK"
+
+            return jsonify({
+                'transcript': text,
+                'scam_probability': percentage / 100,
+                'risk_level': risk_level,
+                'recommendation': "⚠️ Analysis unavailable - using fallback. Please try again later.",
+                'warnings': ['Model not loaded - limited analysis'] + keywords_found[:5],
+                'analysis_details': {
+                    'fallback_mode': True,
+                    'keyword_score': keyword_score,
+                    'detected_keywords': keywords_found[:10]
+                },
+                'model_status': 'unavailable'
+            })
+
         # Get prediction from model
         result = predict_scam(text)
-        
+
         if 'error' in result:
             return jsonify(result), 500
-        
+
         # Format for the enhanced UI
         formatted_result = {
             'transcript': text,
-            'scam_probability': result['scam_probability'] / 100,  # Convert back to 0-1 for UI
+            'scam_probability': result['scam_probability'] / 100,
             'risk_level': result['risk_level'],
             'recommendation': get_recommendation(result['scam_probability']),
             'warnings': get_warnings(text, result['scam_probability']),
-            'analysis_details': get_analysis_details(text)
+            'analysis_details': get_analysis_details(text),
+            'model_status': 'loaded'
         }
-        
+
         return jsonify(formatted_result)
-        
+
     except Exception as e:
         return jsonify({'error': f'Server error: {str(e)}'}), 500
 
@@ -576,14 +757,41 @@ def get_analysis_details(text):
         'patterns': patterns[:5]                    # Limit to top 5
     }
 
-if __name__ == '__main__':
-    # Load model on startup
-    if load_model():
-        print("✅ Web application ready!")
-        print("🔗 http://localhost:5002")
-        print("📝 Login page: http://localhost:5002/login")
-        print("📊 Dashboard: http://localhost:5002/dashboard")
-        app.run(host='127.0.0.1', port=5002, debug=False)
+# =========================
+# STARTUP (Works with Gunicorn)
+# =========================
+
+def initialize_app():
+    """Initialize app - called both for direct run and gunicorn."""
+    print("\n" + "=" * 60)
+    print("🚀 Starting Voice Scam Detection Backend")
+    print("=" * 60)
+
+    # Load model
+    model_loaded = load_model()
+
+    if model_loaded:
+        print("✅ Model loaded successfully!")
     else:
-        print("❌ Failed to load model. Server not started.")
-        sys.exit(1)
+        print("⚠️ Model NOT loaded - running in degraded mode")
+        print(f"   Error: {model_load_error}")
+
+    print("=" * 60)
+    return model_loaded
+
+# Initialize on module load (works with gunicorn)
+model_loaded_at_startup = initialize_app()
+
+# Show startup info when running directly
+if __name__ == '__main__':
+    import socket
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+
+    print(f"✅ Web application ready!")
+    print(f"🔗 Server: http://localhost:5002")
+    print(f"📝 Login: http://localhost:5002/login")
+    print(f"📊 Dashboard: http://localhost:5002/dashboard")
+    print(f"💚 Health: http://localhost:5002/health")
+
+    app.run(host='127.0.0.1', port=5002, debug=False)

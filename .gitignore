@@ -42,6 +42,14 @@ server.log
 datasets/
 downloaded_datasets/
 
+# Experimental and variant files
+app_simple.py
+simple_server.py
+simple_server_fixed.py
+test_model_accuracy.py
+test_transcription.py
+train_with_common_voice.py
+
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -64,3 +72,7 @@ test_cookies.txt
 # Cache files
 *.cache
 .pytest_cache/
+# Large transformer models
+model/transformer_model/
+*.safetensors
+*.bin
