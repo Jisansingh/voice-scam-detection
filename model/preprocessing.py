@@ -4,7 +4,7 @@ Improved preprocessing for voice scam detection
 import re
 import string
 from typing import List, Tuple
-
+from model.preprocessing import *
 # Common contractions expansion
 CONTRACTIONS = {
     "ain't": "is not", "aren't": "are not", "can't": "cannot",

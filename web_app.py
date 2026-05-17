@@ -49,6 +49,15 @@ except ImportError:
 
 print("🚀 Starting Complete Scam Detection Web Application...")
 
+# Import calibrated detector for reduced false positives
+try:
+    from model.calibrated_inference import CalibratedScamDetector
+    CALIBRATED_DETECTOR = CalibratedScamDetector()
+    print("✅ Calibrated detector loaded (v2.1 - reduced false positives)")
+except Exception as e:
+    CALIBRATED_DETECTOR = None
+    print(f"⚠️ Calibrated detector not available: {e}")
+
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = 'cybcup_scam_detection_2024'  # Change this in production
@@ -387,7 +396,26 @@ def transcribe_audio_fallback(audio_file):
         return f"Error: Transcription failed - {str(e)}"
 
 def predict_scam(text):
-    """Make prediction using the trained model"""
+    """Make prediction using calibrated detector for reduced false positives"""
+    
+    # Use calibrated detector if available
+    if CALIBRATED_DETECTOR:
+        try:
+            result = CALIBRATED_DETECTOR.analyze(text)
+            percentage = result['scam_probability'] * 100
+            return {
+                'text': text,
+                'scam_probability': round(percentage, 2),
+                'raw_probability': result['scam_probability'],
+                'prediction': 1 if result['is_scam'] else 0,
+                'risk_level': result['risk_level'],
+                'is_scam': result['is_scam'],
+                'model_version': 'CalibratedDetector_v2.1'
+            }
+        except Exception as e:
+            print(f"⚠️ Calibrated detector error: {e}")
+    
+    # Fallback to raw model if calibrated detector fails
     if not model or not vectorizer:
         return {'error': 'Model not loaded'}
 
@@ -398,28 +426,20 @@ def predict_scam(text):
         # Transform text using vectorizer
         X = vectorizer.transform([processed_text])
 
-        # Debug logging for feature dimensions
-        print(f"🔍 Prediction feature shape: {X.shape}")
-        print(f"🔍 Model expects: {model.n_features_in_} features")
-
         # Get prediction and probability
         prediction = model.predict(X)[0]
-        probability = model.predict_proba(X)[0][1]  # Probability of being scam (0 to 1)
+        probability = model.predict_proba(X)[0][1]
         
         # Convert to percentage (0 to 100)
         percentage = float(probability * 100)
         
-        # Determine risk level
-        if percentage >= 75:
-            risk_level = "CRITICAL RISK"
-        elif percentage >= 50:
-            risk_level = "HIGH RISK"
-        elif percentage >= 25:
-            risk_level = "MEDIUM RISK"
-        elif percentage >= 10:
-            risk_level = "LOW RISK"
+        # Use calibrated thresholds
+        if percentage >= 70:
+            risk_level = "HIGH"
+        elif percentage >= 55:
+            risk_level = "MEDIUM"
         else:
-            risk_level = "MINIMAL RISK"
+            risk_level = "LOW"
         
         return {
             'text': text,

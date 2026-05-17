@@ -1,13 +1,18 @@
 """
 Optimized inference module for voice scam detection
 Combines TF-IDF + Logistic Regression with improved preprocessing and keyword detection
+
+False Positive Reduction:
+- Safe phrase whitelist
+- Normal conversation detection
+- Conservative scoring
+- Multi-signal requirement for HIGH risk
 """
 import joblib
 import numpy as np
 import os
 from typing import Dict, List, Tuple, Optional
-import pickle
-import gzip
+import re
 
 # Import local modules
 from preprocessing import clean_text, extract_features_from_text, extract_manipulation_tactics, tokenize_for_tfidf
@@ -18,6 +23,59 @@ from keyword_detector import (
     detect_urgency,
     SCAM_CATEGORIES
 )
+
+
+# Safe phrases that should always be LOW risk
+SAFE_PHRASES = [
+    # Greetings
+    'hello', 'hi', 'good morning', 'good afternoon', 'good evening', 'hey',
+    'how are you', 'howdy', 'greetings',
+
+    # Weather/casual talk
+    'weather', 'sunny', 'rainy', 'cold', 'hot', 'warm',
+    'nice day', 'beautiful day',
+
+    # Test recordings
+    'test recording', 'testing', 'test message', 'this is a test',
+    'voice test', 'audio test', 'microphone test',
+
+    # Normal conversation starters
+    'just wanted to', 'just checking', 'just calling to',
+    'how have you been', 'long time no see',
+    'what have you been up to',
+
+    # Casual phrases
+    'no problem', 'thats fine', 'no worries',
+    'have a good day', 'talk to you later', 'see you',
+    'thanks for calling',
+
+    # Neutral statements
+    'this is', 'my name is', 'i am calling from',
+    'just a quick', 'just a short',
+    'normal conversation', 'casual talk',
+
+    # Weather-related
+    'about the weather', 'weather today', 'nice weather',
+    'hope you are having', 'great day today',
+
+    # Transcription related
+    'transcription', 'speech to text', 'speech recognition',
+    'voice recognition', 'audio transcription',
+]
+
+# Phrases that indicate normal conversation (not scam)
+NORMAL_CONVERSATION_PATTERNS = [
+    r'^(hello|hi|hey)\s',
+    r'how\s+(are|have)\s+you',
+    r'good\s+(morning|afternoon|evening)',
+    r'just\s+(a\s+)?(test|checking|casual)',
+    r'this\s+is\s+(a\s+)?(test|normal|just)',
+    r'(weather|temperature)',
+    r'(meeting|schedule|appointment)',
+    r'(thank|thanks)\s+(you|for)',
+    r'(goodbye|bye|see you)',
+    r'i am (just|only) (calling|talking)',
+]
 
 
 class ScamDetector:

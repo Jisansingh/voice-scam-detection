@@ -15,15 +15,22 @@ warnings.filterwarnings('ignore')
 # Add model directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Import improved modules
+# Import calibrated modules (false positive reduction)
 try:
-    from improved_inference import ScamDetector, create_api_response
+    from calibrated_inference import CalibratedScamDetector, create_api_response
     from preprocessing import clean_text, extract_features_from_text, extract_manipulation_tactics
-    print("✅ Improved modules loaded")
+    print("✅ Calibrated modules loaded (v2.1 - reduced false positives)")
     IMPROVED_MODE = True
 except ImportError as e:
-    print(f"⚠️ Could not load improved modules: {e}")
-    IMPROVED_MODE = False
+    print(f"⚠️ Could not load calibrated modules: {e}")
+    try:
+        from improved_inference import ScamDetector, create_api_response
+        from preprocessing import clean_text, extract_features_from_text, extract_manipulation_tactics
+        print("✅ Fallback: Improved modules loaded")
+        IMPROVED_MODE = True
+    except ImportError as e2:
+        print(f"⚠️ Could not load improved modules: {e2}")
+        IMPROVED_MODE = False
 
 app = Flask(__name__)
 
@@ -41,8 +48,8 @@ except Exception as e:
     model = None
     vectorizer = None
 
-# Initialize improved detector
-detector = ScamDetector() if IMPROVED_MODE else None
+# Initialize calibrated detector
+detector = CalibratedScamDetector() if IMPROVED_MODE else None
 
 # Legacy keyword lists (used if improved modules unavailable)
 SCAM_KEYWORDS = {
@@ -320,7 +327,7 @@ def get_risk_assessment(probability, details):
         level = "HIGH RISK"
         emoji = "🔴"
         recommendation = "⛔ LIKELY SCAM - Do not share any information"
-    elif probability >= 0.45:  # CHANGED from 0.5
+    elif probability >= 0.55:  # CALIBRATED - was 0.45
         level = "MEDIUM RISK"
         emoji = "🟡"
         recommendation = "⚠️ SUSPICIOUS - Verify caller identity independently"
@@ -515,7 +522,7 @@ def analyze_audio():
             response = {
                 'transcript': text,
                 'scam_probability': float(scam_probability),
-                'is_scam': scam_probability >= 0.45,
+                'is_scam': scam_probability >= 0.60,
                 'risk_level': risk_assessment['level'],
                 'risk_emoji': risk_assessment['emoji'],
                 'recommendation': risk_assessment['recommendation'],
@@ -580,14 +587,14 @@ def analyze_text():
             # Legacy mode
             score, keywords, indicators = detect_scam_indicators(text)
             probability = min(score / 15.0, 1.0)
-            is_scam = probability >= 0.45
+            is_scam = probability >= 0.60
 
             return jsonify({
                 'success': True,
                 'result': {
                     'scam_probability': probability,
                     'is_scam': is_scam,
-                    'risk_level': 'HIGH' if probability >= 0.65 else ('MEDIUM' if probability >= 0.45 else 'LOW'),
+                    'risk_level': 'HIGH' if probability >= 0.70 else ('MEDIUM' if probability >= 0.55 else 'LOW'),
                     'detected_keywords': keywords,
                     'indicators': indicators
                 }
