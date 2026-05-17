@@ -1,0 +1,208 @@
+{
+  "timestamp": "2026-05-17T01:19:47.450615",
+  "model_version": "2.0",
+  "scam_samples": [
+    {
+      "text": "your account is blocked share otp to unblock immediately",
+      "expected": "scam",
+      "predicted": "scam",
+      "probability": 0.6778,
+      "risk_level": "MEDIUM",
+      "category": "otp_scam",
+      "warnings": [
+        "\ud83d\udd22 OTP scam - Never share OTP with anyone calling you",
+        "\ud83d\udea8 CRITICAL: Request for sensitive information detected"
+      ]
+    },
+    {
+      "text": "congratulations you won lottery prize claim money now",
+      "expected": "scam",
+      "predicted": "legit",
+      "probability": 0.338,
+      "risk_level": "LOW",
+      "category": "prize_lottery",
+      "warnings": [
+        "\ud83c\udf81 Prize scam - You cannot win a lottery you did not enter",
+        "\ud83d\udd11 Multiple scam keywords detected"
+      ]
+    },
+    {
+      "text": "sbi bank calling verify your aadhaar kyc update now",
+      "expected": "scam",
+      "predicted": "scam",
+      "probability": 0.5524,
+      "risk_level": "MEDIUM",
+      "category": "kyc_scam",
+      "warnings": [
+        "\ud83d\udd10 KYC scam - RBI never asks for KYC via phone calls",
+        "\ud83d\udea8 CRITICAL: Request for sensitive information detected"
+      ]
+    },
+    {
+      "text": "irs notice arrest warrant issued call immediately",
+      "expected": "scam",
+      "predicted": "scam",
+      "probability": 0.5429,
+      "risk_level": "MEDIUM",
+      "category": "irs_tax_scam",
+      "warnings": [
+        "\ud83c\udfdb\ufe0f Tax scam - IT Department never demands immediate payment via phone",
+        "\ud83d\udd11 Multiple scam keywords detected"
+      ]
+    },
+    {
+      "text": "your upi account blocked update kyc to continue",
+      "expected": "scam",
+      "predicted": "scam",
+      "probability": 0.5474,
+      "risk_level": "MEDIUM",
+      "category": "bank_fraud",
+      "warnings": [
+        "\ud83c\udfe6 Bank impersonation - Banks never ask for CVV/PIN via phone",
+        "\ud83d\udea8 CRITICAL: Request for sensitive information detected"
+      ]
+    },
+    {
+      "text": "this is bank security department confirm your cvv number",
+      "expected": "scam",
+      "predicted": "scam",
+      "probability": 0.6626,
+      "risk_level": "MEDIUM",
+      "category": "bank_fraud",
+      "warnings": [
+        "\ud83c\udfe6 Bank impersonation - Banks never ask for CVV/PIN via phone",
+        "\ud83d\udea8 CRITICAL: Request for sensitive information detected"
+      ]
+    },
+    {
+      "text": "your son met with accident send money hospital now",
+      "expected": "scam",
+      "predicted": "legit",
+      "probability": 0.2625,
+      "risk_level": "LOW",
+      "category": "emergency_scam",
+      "warnings": [
+        "\ud83d\udea8 Emergency scam - Verify any urgent money request by calling directly",
+        "\ud83d\udd11 Multiple scam keywords detected"
+      ]
+    },
+    {
+      "text": "paytm wallet suspended update kyc immediately",
+      "expected": "scam",
+      "predicted": "scam",
+      "probability": 0.6502,
+      "risk_level": "MEDIUM",
+      "category": "upi_scam",
+      "warnings": [
+        "\ud83d\udcf1 UPI/Bank scam - Never share OTP or UPI PIN with callers",
+        "\ud83d\udea8 CRITICAL: Request for sensitive information detected"
+      ]
+    },
+    {
+      "text": "electricity bill unpaid disconnection today pay now",
+      "expected": "scam",
+      "predicted": "legit",
+      "probability": 0.3039,
+      "risk_level": "LOW",
+      "category": "utility_scam",
+      "warnings": [
+        "\ud83d\udd27 Utility scam - Utilities never threaten immediate disconnection",
+        "\ud83d\udd11 Multiple scam keywords detected"
+      ]
+    },
+    {
+      "text": "amazon suspicious transaction verify your account now",
+      "expected": "scam",
+      "predicted": "legit",
+      "probability": 0.293,
+      "risk_level": "LOW",
+      "category": "bank_fraud",
+      "warnings": [
+        "\ud83c\udfe6 Bank impersonation - Banks never ask for CVV/PIN via phone",
+        "\ud83d\udd11 Multiple scam keywords detected"
+      ]
+    }
+  ],
+  "legit_samples": [
+    {
+      "text": "meeting scheduled tomorrow at 5 pm",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.0727,
+      "risk_level": "LOW",
+      "category": "romance_scam"
+    },
+    {
+      "text": "your package has been delivered successfully",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.0983,
+      "risk_level": "LOW",
+      "category": "package_delivery"
+    },
+    {
+      "text": "thank you for your payment",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.0852,
+      "risk_level": "LOW",
+      "category": "general_scam"
+    },
+    {
+      "text": "your appointment is confirmed for next week",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.099,
+      "risk_level": "LOW",
+      "category": "general_scam"
+    },
+    {
+      "text": "please find attached the requested document",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.05,
+      "risk_level": "LOW",
+      "category": "general_scam"
+    },
+    {
+      "text": "your order has been shipped",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.066,
+      "risk_level": "LOW",
+      "category": "general_scam"
+    },
+    {
+      "text": "the meeting has been rescheduled to friday",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.0643,
+      "risk_level": "LOW",
+      "category": "romance_scam"
+    },
+    {
+      "text": "your feedback has been recorded",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.0515,
+      "risk_level": "LOW",
+      "category": "general_scam"
+    },
+    {
+      "text": "please verify your email address",
+      "expected": "legit",
+      "predicted": "scam",
+      "probability": 0.5095,
+      "risk_level": "MEDIUM",
+      "category": "package_delivery"
+    },
+    {
+      "text": "your request is being processed",
+      "expected": "legit",
+      "predicted": "legit",
+      "probability": 0.0613,
+      "risk_level": "LOW",
+      "category": "general_scam"
+    }
+  ]
+}

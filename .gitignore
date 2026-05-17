@@ -72,3 +72,7 @@ test_cookies.txt
 # Cache files
 *.cache
 .pytest_cache/
+# Large transformer models
+model/transformer_model/
+*.safetensors
+*.bin

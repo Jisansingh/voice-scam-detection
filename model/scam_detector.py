@@ -1,4 +1,4 @@
-# enhanced_scam_detector.py
+# enhanced_scam_detector.py - Improved with better preprocessing and inference
 from flask import Flask, render_template, request, jsonify
 import speech_recognition as sr
 import joblib
@@ -8,7 +8,22 @@ import tempfile
 import librosa
 import numpy as np
 import warnings
+import sys
+
 warnings.filterwarnings('ignore')
+
+# Add model directory to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Import improved modules
+try:
+    from improved_inference import ScamDetector, create_api_response
+    from preprocessing import clean_text, extract_features_from_text, extract_manipulation_tactics
+    print("✅ Improved modules loaded")
+    IMPROVED_MODE = True
+except ImportError as e:
+    print(f"⚠️ Could not load improved modules: {e}")
+    IMPROVED_MODE = False
 
 app = Flask(__name__)
 
@@ -16,49 +31,41 @@ UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Load model
+# Load ML model for legacy mode
 try:
     model = joblib.load('model/scam_model.pkl')
     vectorizer = joblib.load('model/vectorizer.pkl')
-    print("✅ Model loaded successfully!")
+    print("✅ Legacy model loaded!")
 except Exception as e:
-    print(f"❌ Error loading model: {e}")
+    print(f"⚠️ Legacy model not loaded: {e}")
     model = None
     vectorizer = None
 
-# ENHANCED: More comprehensive scam keywords with categories
+# Initialize improved detector
+detector = ScamDetector() if IMPROVED_MODE else None
+
+# Legacy keyword lists (used if improved modules unavailable)
 SCAM_KEYWORDS = {
-    # High-risk keywords (weight 5)
-    'cvv': 5, 'pin number': 5, 'social security': 5, 'arrest': 5, 
+    'cvv': 5, 'pin number': 5, 'social security': 5, 'arrest': 5,
     'warrant': 5, 'account blocked': 5, 'frozen account': 5,
-    
-    # Medium-high risk (weight 4)
     'otp': 4, 'password': 4, 'suspended': 4, 'unauthorized': 4,
     'legal action': 4, 'verify now': 4, 'compromised': 4,
-    
-    # Medium risk (weight 3)
     'urgent': 3, 'immediately': 3, 'expire': 3, 'confirm': 3,
     'update': 3, 'security alert': 3, 'tax': 3, 'prize': 3,
     'federal': 3, 'investigation': 3, 'limited time': 3,
-    
-    # Lower risk but suspicious (weight 2)
     'verify': 2, 'bank account': 2, 'credit card': 2, 'refund': 2,
     'click link': 2, 'act now': 2, 'final notice': 2, 'won': 2,
-    
-    # Common scam phrases (weight 4)
     'last chance': 4, 'act fast': 4, 'call back': 3,
     'press 1': 3, 'press one': 3, 'your account': 2,
     'confirm your': 3, 'provide your': 3, 'share your': 3
 }
 
-# ENHANCED: Urgency phrases that scammers use
 URGENCY_PHRASES = [
     'right now', 'immediately', 'within 24 hours', 'before it\'s too late',
     'last warning', 'final notice', 'urgent action required', 'act now',
     'time sensitive', 'expires today', 'limited time', 'don\'t delay'
 ]
 
-# ENHANCED: Request for sensitive info (major red flag)
 SENSITIVE_INFO_REQUESTS = [
     'cvv', 'pin', 'password', 'social security', 'ssn', 'account number',
     'routing number', 'mother\'s maiden name', 'date of birth', 'card number'
@@ -412,6 +419,7 @@ def improve_transcription_quality(recognizer, audio_path):
 # Keep your existing routes and add enhanced analysis
 @app.route('/', methods=['POST'])
 def analyze_audio():
+    """Analyze audio file for scam detection"""
     if 'audio' not in request.files:
         return jsonify({'error': 'No audio file provided'}), 400
 
@@ -421,12 +429,13 @@ def analyze_audio():
 
     temp_path = None
     converted_path = None
-    
+
     try:
         print(f"\n{'='*60}")
         print(f"📁 ANALYZING: {audio_file.filename}")
+        print(f"Mode: {'Improved' if IMPROVED_MODE and detector else 'Legacy'}")
         print(f"{'='*60}")
-        
+
         # Save uploaded file
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(audio_file.filename)[1]) as temp_file:
             audio_file.save(temp_file.name)
@@ -436,7 +445,7 @@ def analyze_audio():
         audio = AudioSegment.from_file(temp_path)
         with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as converted_file:
             converted_path = converted_file.name
-        
+
         audio = audio.set_frame_rate(16000).set_channels(1)
         audio.export(converted_path, format="wav")
         print(f"✅ Converted: {len(audio)}ms, {audio.frame_rate}Hz")
@@ -444,25 +453,24 @@ def analyze_audio():
         # STEP 1: Extract audio features
         print("\n🎵 Extracting audio features...")
         audio_features = extract_enhanced_audio_features(converted_path)
-        
+
         if audio_features:
             print(f"✅ Features extracted:")
             print(f"   Duration: {audio_features['duration']:.1f}s")
             print(f"   Tempo: {audio_features['tempo']:.0f} BPM")
             print(f"   Stress indicators: ZCR={audio_features['zcr_mean']:.3f}")
 
-        # STEP 2: Improved transcription
+        # STEP 2: Transcription
         print("\n🎙️ Transcribing audio...")
         recognizer = sr.Recognizer()
-        recognizer.energy_threshold = 250  # LOWERED for sensitivity
+        recognizer.energy_threshold = 250
         recognizer.dynamic_energy_threshold = True
         recognizer.pause_threshold = 0.8
         recognizer.operation_timeout = 30
-        
+
         text = improve_transcription_quality(recognizer, converted_path)
-        
+
         if not text or len(text.split()) < 3:
-            # If transcription is too short, still analyze audio features
             if audio_features:
                 print("⚠️ Transcription incomplete, relying on audio analysis")
                 text = "[Audio analysis only - unclear speech]"
@@ -473,52 +481,67 @@ def analyze_audio():
                              '• Minimal background noise\n' +
                              '• Audio is not music or non-speech content'
                 }), 400
-        
-        print(f"✅ Transcribed: {text}")
 
-        # STEP 3: Enhanced risk analysis
+        print(f"✅ Transcribed: {text[:100]}...")
+
+        # STEP 3: Risk analysis - use improved detector if available
         print(f"\n🔍 Analyzing for scam indicators...")
-        scam_probability, analysis_details = calculate_scam_risk_enhanced(text, audio_features)
-        
-        risk_assessment = get_risk_assessment(scam_probability, analysis_details)
 
-        # Cleanup
-        try:
-            if temp_path and os.path.exists(temp_path):
-                os.unlink(temp_path)
-            if converted_path and converted_path != temp_path and os.path.exists(converted_path):
-                os.unlink(converted_path)
-        except:
-            pass
+        if IMPROVED_MODE and detector:
+            # Use improved inference
+            result = detector.analyze(text, audio_features)
+            response = create_api_response(result, include_audio=bool(audio_features))
 
-        # Enhanced response
-        response = {
-            'transcript': text,
-            'scam_probability': float(scam_probability),
-            'is_scam': scam_probability >= 0.45,  # LOWERED threshold
-            'risk_level': risk_assessment['level'],
-            'risk_emoji': risk_assessment['emoji'],
-            'recommendation': risk_assessment['recommendation'],
-            'warnings': risk_assessment['warnings'],
-            'analysis_details': {
-                'text_indicators': analysis_details.get('text_analysis', {}),
-                'audio_features': {
-                    'duration': audio_features.get('duration', 0) if audio_features else 0,
-                    'tempo': audio_features.get('tempo', 0) if audio_features else 0,
-                    'audio_risk_score': analysis_details.get('audio_probability', 0)
-                } if audio_features else None
+            # Add audio features to response
+            if audio_features:
+                response['result']['audio_features'] = {
+                    'duration': round(audio_features.get('duration', 0), 1),
+                    'tempo': round(audio_features.get('tempo', 0), 0),
+                    'indicators': result.get('analysis', {}).get('audio', {}).get('indicators', [])
+                }
+
+            print(f"\n{'='*60}")
+            print(f"RESULT: {result['risk_level']} RISK")
+            print(f"Probability: {result['scam_probability']:.1%}")
+            print(f"Category: {result['scam_category']}")
+            print(f"{'='*60}\n")
+
+            return jsonify(response)
+        else:
+            # Fall back to legacy analysis
+            scam_probability, analysis_details = calculate_scam_risk_enhanced(text, audio_features)
+            risk_assessment = get_risk_assessment(scam_probability, analysis_details)
+
+            response = {
+                'transcript': text,
+                'scam_probability': float(scam_probability),
+                'is_scam': scam_probability >= 0.45,
+                'risk_level': risk_assessment['level'],
+                'risk_emoji': risk_assessment['emoji'],
+                'recommendation': risk_assessment['recommendation'],
+                'warnings': risk_assessment['warnings'],
+                'analysis_details': {
+                    'text_indicators': analysis_details.get('text_analysis', {}),
+                    'audio_features': {
+                        'duration': audio_features.get('duration', 0) if audio_features else 0,
+                        'tempo': audio_features.get('tempo', 0) if audio_features else 0,
+                        'audio_risk_score': analysis_details.get('audio_probability', 0)
+                    } if audio_features else None
+                },
+                'api_version': '1.5'
             }
-        }
-        
-        print(f"\n{'='*60}")
-        print(f"RESULT: {risk_assessment['emoji']} {risk_assessment['level']}")
-        print(f"Probability: {scam_probability:.1%}")
-        print(f"{'='*60}\n")
-        
-        return jsonify(response)
+
+            print(f"\n{'='*60}")
+            print(f"RESULT: {risk_assessment['emoji']} {risk_assessment['level']}")
+            print(f"Probability: {scam_probability:.1%}")
+            print(f"{'='*60}\n")
+
+            return jsonify(response)
 
     except Exception as e:
         print(f"❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
         try:
             if temp_path and os.path.exists(temp_path):
                 os.unlink(temp_path)
@@ -536,8 +559,62 @@ def home():
 def favicon():
     return '', 204
 
+
+@app.route('/api/analyze', methods=['POST'])
+def analyze_text():
+    """API endpoint for text-only scam analysis"""
+    if not request.is_json:
+        return jsonify({'error': 'Content-Type must be application/json'}), 400
+
+    data = request.get_json()
+    text = data.get('text', '')
+
+    if not text or len(text.strip()) < 3:
+        return jsonify({'error': 'Text is required (min 3 characters)'}), 400
+
+    try:
+        if IMPROVED_MODE and detector:
+            result = detector.analyze(text)
+            return jsonify(create_api_response(result))
+        else:
+            # Legacy mode
+            score, keywords, indicators = detect_scam_indicators(text)
+            probability = min(score / 15.0, 1.0)
+            is_scam = probability >= 0.45
+
+            return jsonify({
+                'success': True,
+                'result': {
+                    'scam_probability': probability,
+                    'is_scam': is_scam,
+                    'risk_level': 'HIGH' if probability >= 0.65 else ('MEDIUM' if probability >= 0.45 else 'LOW'),
+                    'detected_keywords': keywords,
+                    'indicators': indicators
+                }
+            })
+    except Exception as e:
+        return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
+
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'mode': 'improved' if IMPROVED_MODE else 'legacy',
+        'ml_model_loaded': model is not None,
+        'improved_modules': IMPROVED_MODE,
+        'api_version': '2.0' if IMPROVED_MODE else '1.5'
+    })
+
+
 if __name__ == '__main__':
-    print("🚀 Enhanced Voice Scam Detector")
-    print("📊 Features: Improved sensitivity, multi-layer detection")
-    print("🎯 Lower false negatives, better scam detection")
+    print("\n" + "="*60)
+    print("🚀 VOICE SCAM DETECTOR")
+    print("="*60)
+    print(f"Mode: {'Improved (v2.0)' if IMPROVED_MODE else 'Legacy (v1.5)'}")
+    print(f"ML Model: {'Loaded' if model else 'Not available'}")
+    print(f"Improved modules: {'Available' if IMPROVED_MODE else 'Not available'}")
+    print("="*60 + "\n")
     app.run(debug=True, host='0.0.0.0', port=5001)
+

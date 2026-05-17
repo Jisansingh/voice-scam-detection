@@ -1,0 +1,311 @@
+text,label,category,language,tactics
+arey yaar tu kaahan hai abhi kaisa hai sab,0,family,en,none
+bhaiyo aur bahno ko hello bolo wo bohot miss kar rahe hain,0,family,en,none
+mummy ne poocha tu kab ghar aayega khaana banaya hai,0,family,en,none
+papa bol rahe hain office se jaldi aana kuch kaam hai,0,family,en,none
+dadaji phone pe bohot khush hue teri awaaz sunke,0,family,en,none
+arey behen tu exam ki preparation kaisi chal rahi hai,0,family,en,none
+chacha ji ne poocha tumhara number kahaan se mila,0,family,en,none
+mausi ne naya ghar shuru kiya hai party de rahi hai,0,family,en,none
+papa ne kaha bus ticket book kar lo weekend ke liye,0,family,en,none
+arey didi tu office se late aati hai kya khana banaogi,0,family,en,none
+bhai tu market se sabzi leke aana mummy ne kaha,0,family,en,none
+nana ji ne health ke baare mein poocha,0,family,en,none
+arey cousin tu last week ki shaadi mein kahan gaya,0,family,en,none
+dadi ne bohot miss kiya aur video call karna,0,family,en,none
+bhai kya haal hai kahan fase hue ho,0,friend_chat,en,none
+arey yaar kal movie dekhne chalte hain kaisa rahega,0,friend_chat,en,none
+tu canteen mein aaja coffee peete hain,0,friend_chat,en,none
+bhai tune naya phone liya kitna price aaya,0,friend_chat,en,none
+arey yaar placement ka result aaya pakka milgaya,0,friend_chat,en,none
+kal raat ko group mein baat karte hain bhookhe mat raho,0,friend_chat,en,none
+tu sports ground aaja cricket khelenge,0,friend_chat,en,none
+arey last semester ka result dekh liya tu topper ban gaya,0,friend_chat,en,none
+bhai library mein seat mili main bhi aana chahta hoon,0,friend_chat,en,none
+yaar cafe ki driving mil jaye toh best hai,0,friend_chat,en,none
+arey tu assignment bana raha hai share kar de,0,friend_chat,en,none
+bhai festival mein ghar ja raha hai train milta hai,0,friend_chat,en,none
+professor ne assignment last date badha diya hai,0,student,en,none
+arey exam timetable aaya hai preparation shuru karo,0,student,en,none
+library mein seats milna mushkil ho gaya yaar,0,student,en,none
+tu chemistry ki notes share kar sakta hai,0,student,en,none
+bhai marks aaye hain portal pe check kar le,0,student,en,none
+arey sem fees online submit karni hai last date kal hai,0,student,en,none
+tu placement cell mein gaye interview dates aaye hain,0,student,en,none
+bhai project report deadline miss ho gaya kya karein,0,student,en,none
+arey mess ka food bohot kharab ho gaya hai,0,student,en,none
+tu hostel room change ke liye apply kiya,0,student,en,none
+bhai scholarship form last week tak last date hai,0,student,en,none
+arey tuition fees installment ki facility milti hai kya,0,student,en,none
+good morning sir meeting 3 baje hai,0,office,en,none
+arey report submit kar diya email bhej diya hai,0,office,en,none
+bhai client se call aaya presentation ready karo,0,office,en,none
+tu leaves ke liye application bhejna hr ne kaha,0,office,en,none
+arey project deadline this week hai machao,0,office,en,none
+sir ne naya task assign kiya hai assign kar diya,0,office,en,none
+bhai work from home ki permission mil gayi hai,0,office,en,none
+arey team meeting mein sabko invite kar diya,0,office,en,none
+tu performance review ke liye prepare karo date fix hai,0,office,en,none
+sir ne appreciation kiya project ke liye bohot khush hai,0,office,en,none
+arey delivery boy bahar khada hai door open karo,0,delivery,en,none
+bhai order cancel karna hai koi issue hai,0,delivery,en,none
+tu order ki track kar sakta hai kahan phas gaya,0,delivery,en,none
+arey delivery time 10 minutes mein aayega wait karo,0,delivery,en,none
+package thoda damage ho gaya hai return policy check karo,0,delivery,en,none
+bhai cod hai ya online payment karni hai,0,delivery,en,none
+arey wrong item deliver ho gaya hai exchange karana hai,0,delivery,en,none
+order delivered successfully photo leke rakha hai,0,delivery,en,none
+bhai delivery partner ne call kiya location confirm karo,0,delivery,en,none
+arey grocery order ka bill sahi nahi aaya verify karo,0,delivery,en,none
+arey sale mein bohot sasta mil raha hai shopping karo,0,shopping,en,none
+bhai online store pe discount code chal raha hai,0,shopping,en,none
+tu clothes ka size check kar exchange possible hai,0,shopping,en,none
+arey shoe ka colour nahi pasand return karna hai,0,shopping,en,none
+bhai cashback offer mil raha hai payment karo,0,shopping,en,none
+arey wallet ki payment fail ho gayi retry karo,0,shopping,en,none
+tu gift wrapping karwa sakte ho birthday gift hai,0,shopping,en,none
+bhai order placed ho gaya confirmation email aaya,0,shopping,en,none
+arey product out of stock hai notify kar denge,0,shopping,en,none
+shopping app ka new version download kiya fast hai,0,shopping,en,none
+arey flight booking confirm ho gayi pnr bhej diya,0,travel,en,none
+bhai train ki waiting list confirm ho gayi,0,travel,en,none
+tu hotel reservation kar liya checkin time dekho,0,travel,en,none
+arey cab booked hai driver 10 minute mein aayega,0,travel,en,none
+bhai travel insurance ka option hai lena chahiye,0,travel,en,none
+arey boarding pass print karna hai kiosk available hai,0,travel,en,none
+tu baggage allowance check kiya extra ka charge lagega,0,travel,en,none
+bhai visa application status online check kar sakte hain,0,travel,en,none
+arey refund mil gaya flight cancellation ke baad,0,travel,en,none
+tour package ki booking kar raha hai itinerary dekho,0,travel,en,none
+arey zomato se order kiya 30 minute mein aayega,0,food,en,none
+bhai swiggy par discounts chal rahe hain try karo,0,food,en,none
+tu restaurant mein table book kiya confirm aaya,0,food,en,none
+arey biryani ka order place kiya jaldi aayega,0,food,en,none
+bhai buffet mein sabziyo ki variety bohot achhi hai,0,food,en,none
+arey tiffin service ki trial le raha hai first day hai,0,food,en,none
+tu home delivery ka time prefer karta hai,0,food,en,none
+bhai chinese restaurant ka recommendation chahiye,0,food,en,none
+arey cake order kiya birthday ke liye timing correct hai,0,food,en,none
+diet plan ke liye low oil ka khana milta hai kya,0,food,en,none
+arey bank ne new policy introduce kiya hai,0,banking,en,none
+bhai atm ka pin change karna hai kaise karte hain,0,banking,en,none
+tu online banking activate kiya secure hai,0,banking,en,none
+arey account statement download kar liya verify karo,0,banking,en,none
+bhai credit card ka bill due hai payment karo,0,banking,en,none
+arey loan application ke liye documents submit kiye,0,banking,en,none
+tu fd ka interest rate check kiya better option hai,0,banking,en,none
+bhai net banking password reset kar raha hai,0,banking,en,none
+arey debit card blocked ho gaya new card manga,0,banking,en,none
+bank branch mein jana padega online issue resolve nahi hua,0,banking,en,none
+arey customer care se baat karni hai representative chahiye,0,customer_support,en,none
+bhai service request register kiya ticket number mil gaya,0,customer_support,en,none
+tu refund status check kar sakta hai,0,customer_support,en,none
+arey warranty claim karni hai process batayo,0,customer_support,en,none
+bhai subscription renew karni hai payment options batado,0,customer_support,en,none
+arey product defect ki complaint kar raha hoon,0,customer_support,en,none
+tu chat support use kar sakte ho quick response milta hai,0,customer_support,en,none
+bhai service charge ki details chahiye breakdown do,0,customer_support,en,none
+arey installation appointment book karni hai,0,customer_support,en,none
+tu return policy ke baare mein batao kitne days mein refund,0,customer_support,en,none
+arey cab booked hai driver 5 minute mein aayega,0,cab_service,en,none
+bhai ride cancel karni hai reason select karo,0,cab_service,en,none
+tu driver ko call kar sakta hai pickup point confirm karo,0,cab_service,en,none
+arey ride fare estimate dekho meter se kam aayega,0,cab_service,en,none
+bhai ride completed rating dena mat bhoolna,0,cab_service,en,none
+arey extra stops add karni hai driver se baat karo,0,cab_service,en,none
+tu outstation ride ke liye package check karo,0,cab_service,en,none
+bhai cab type select karo sedan ya suv,0,cab_service,en,none
+arey driver ne route change kiya reason pocho,0,cab_service,en,none
+ride mein item forgot kar diya lost and found contact karo,0,cab_service,en,none
+arey courier booked hai pickup tomorrow aayega,0,courier,en,none
+bhai tracking number check karo live location dekho,0,courier,en,none
+tu package deliver kar diya receiver ne sign kiya,0,courier,en,none
+arey delivery delayed hai weather ke karan hai,0,courier,en,none
+bhai international shipping ka charges calculate karo,0,courier,en,none
+arey fragile item hai proper packing karo,0,courier,en,none
+courier boy ne call kiya address confirm karo,0,courier,en,none
+bhai order ki delivery 2 days mein hogi,0,courier,en,none
+arey wrong address diya hai correction karo,0,courier,en,none
+package lost ho gaya hai complaint file karo,0,courier,en,none
+arey college fest mein participation karni hai,0,college,en,none
+bhai attendance percentage maintain karna hai,0,college,en,none
+tu club meetings mein attend karta hai,0,college,en,none
+arey college bus route check kiya timing dekho,0,college,en,none
+bhai semester registration last week hai form fill karo,0,college,en,none
+arey library card renew karni hai last date kal hai,0,college,en,none
+tu college canteen ka food card recharge kiya,0,college,en,none
+bhai department mein seminar hai attendance mandatory hai,0,college,en,none
+arey alumni meet ke liye registration open hai,0,college,en,none
+tu sports trials mein part lena hai,0,college,en,none
+arey bgmi mein squad match khelenge,0,gaming,en,none
+bhai free fire ka new event shuru ho gaya hai,0,gaming,en,none
+tu cs go mein rank improve kiya,0,gaming,en,none
+arey valorant ka new agent aaya hai try kiya,0,gaming,en,none
+bhai pubg mobile mein season reset ho gaya,0,gaming,en,none
+arey gaming phone lena chahiye performance better hai,0,gaming,en,none
+tu steam sale mein game khareeda discount mila,0,gaming,en,none
+bhai online tournament mein register kiya,0,gaming,en,none
+arey gaming headphones ki recommendation chahiye,0,gaming,en,none
+tu stream kar raha hai viewer count kaisa hai,0,gaming,en,none
+arey kaisa hai tu koi update hai,0,personal,en,none
+bhai kaal se call nahi hui busy tha kya,0,personal,en,none
+tu apna time manage kar raha hai schedule banao,0,personal,en,none
+arey future ki planning kar raha hoon suggestions chahiye,0,personal,en,none
+bhai health checkup karaya report aayi hai,0,personal,en,none
+arey new hobby shuru karni hai kya suggest karoge,0,personal,en,none
+tu self improvement ke liye kya kar raha hai,0,personal,en,none
+bhai meditation shuru kiya mental health important hai,0,personal,en,none
+arey daily routine maintain kar raha hoon disciplined hoon,0,personal,en,none
+tu relationships ke baare mein kaisa feel kar raha hai,0,personal,en,none
+abhi kaun sa time ho raha hai,0,family,hi,none
+ghar wapas kab aoge,0,family,hi,none
+mummy ne khana banaaya hai,0,family,hi,none
+papa ka phone answering nahi ho raha,0,family,hi,none
+dada ji ki health theek hai,0,family,hi,none
+behen ki shaadi ki taiyari kaise chal rahi hai,0,family,hi,none
+chacha ji ne poochha aapka number,0,family,hi,none
+bhai log bahut miss kar rahe hain,0,family,hi,none
+nani ji ne bahut yaad kiya,0,family,hi,none
+arey behen ka exam kab hai,0,family,hi,none
+papa ne kaha bus ticket book karo,0,family,hi,none
+dadi ne phone pe baat ki,0,family,hi,none
+kal raat ki party mein aoge,0,friend_chat,hi,none
+tu kaha busy hai itna,0,friend_chat,hi,none
+movie dekhne chalte hain na,0,friend_chat,hi,none
+cafe mein chill karne chalte hain,0,friend_chat,hi,none
+bhai tune naya number save kiya kya,0,friend_chat,hi,none
+placement ki news mil gayi,0,friend_chat,hi,none
+sirf tum hi nahi sab missing kar rahe hain,0,friend_chat,hi,none
+gym chalte hain aaj,0,friend_chat,hi,none
+cricket match dekhne jaate hain,0,friend_chat,hi,none
+arey bahut maza aayega,0,friend_chat,hi,none
+exam ka date sheet aaya hai,0,student,hi,none
+assignment ki deadline badh gayi,0,student,hi,none
+library mein jaldi jaana padega,0,student,hi,none
+notes ki xerox karwani hai,0,student,hi,none
+semester fee last date kal tak hai,0,student,hi,none
+attendance ki problem ho gayi hai,0,student,hi,none
+placement ki preparation shuru karo,0,student,hi,none
+project ki presentation date confirm hui,0,student,hi,none
+mess ka food bahut bekaar ho gaya,0,student,hi,none
+hostel ki room change karni hai,0,student,hi,none
+meeting mein attendance zaruri hai,0,office,hi,none
+report ki last date aaj hai,0,office,hi,none
+client se call aana chahiye,0,office,hi,none
+boss ne naya kaam diya hai,0,office,hi,none
+work from home ki request bhejni hai,0,office,hi,none
+team ki performance improve karni hai,0,office,hi,none
+salary slip download karni hai,0,office,hi,none
+leave application submit karni hai,0,office,hi,none
+project deadline aaj hai,0,office,hi,none
+new policy ke baare mein info chahiye,0,office,hi,none
+delivery boy bahar khada hai,0,delivery,hi,none
+order cancel karni hai,0,delivery,hi,none
+tracking number check karna hai,0,delivery,hi,none
+package thoda damage ho gaya hai,0,delivery,hi,none
+wrong item deliver hua hai,0,delivery,hi,none
+order confirm ho gaya hai,0,delivery,hi,none
+delivery time 20 minute hai,0,delivery,hi,none
+grocery items ka bill bana hai,0,delivery,hi,none
+express delivery lena hai,0,delivery,hi,none
+return karne ja rahe hain,0,delivery,hi,none
+sale mein bahut discount mil raha hai,0,shopping,hi,none
+size exchange karni hai,0,shopping,hi,none
+clothes ki quality theek nahi hai,0,shopping,hi,none
+cashback offer chal raha hai,0,shopping,hi,none
+gift wrapping karwaana hai,0,shopping,hi,none
+order placed ho gaya hai,0,shopping,hi,none
+product out of stock hai,0,shopping,hi,none
+discount coupon apply karna hai,0,shopping,hi,none
+payment failed ho gaya hai,0,shopping,hi,none
+wishlist mein add kiya hai,0,shopping,hi,none
+flight ka booking kar liya hai,0,travel,hi,none
+train ki waiting hat gayi,0,travel,hi,none
+hotel ki confirmation mail aayi,0,travel,hi,none
+cab ki booking kar li hai,0,travel,hi,none
+travel insurance lena hai,0,travel,hi,none
+boarding pass print karna hai,0,travel,hi,none
+baggage allowance check karni hai,0,travel,hi,none
+visa status online dekhna hai,0,travel,hi,none
+refund process ho raha hai,0,travel,hi,none
+tour package book karni hai,0,travel,hi,none
+zomato se order kiya hai,0,food,hi,none
+swiggy pe discount mil raha hai,0,food,hi,none
+restaurant mein table book kiya hai,0,food,hi,none
+biryani ka order kiya hai,0,food,hi,none
+home delivery time confirm hai,0,food,hi,none
+diet food order karni hai,0,food,hi,none
+cake order kiya hai birthday ke liye,0,food,hi,none
+thali ka menu dekhna hai,0,food,hi,none
+combo meal lena hai,0,food,hi,none
+pizza ka extra cheese lena hai,0,food,hi,none
+atm pin change karni hai,0,banking,hi,none
+net banking activate karni hai,0,banking,hi,none
+account statement download karni hai,0,banking,hi,none
+credit card bill pay karna hai,0,banking,hi,none
+loan ke liye apply karna hai,0,banking,hi,none
+fd interest rate dekhna hai,0,banking,hi,none
+debit card blocked ho gaya hai,0,banking,hi,none
+upi payment karni hai,0,banking,hi,none
+bank branch jaana padega,0,banking,hi,none
+credit score check karni hai,0,banking,hi,none
+customer care se baat karni hai,0,customer_support,hi,none
+service request register karni hai,0,customer_support,hi,none
+refund status pochna hai,0,customer_support,hi,none
+warranty claim karni hai,0,customer_support,hi,none
+subscription renew karni hai,0,customer_support,hi,none
+complaint register karni hai,0,customer_support,hi,none
+technical help chahiye,0,customer_support,hi,none
+installation appointment lena hai,0,customer_support,hi,none
+return policy dekhni hai,0,customer_support,hi,none
+help desk se baat karni hai,0,customer_support,hi,none
+cab book kar liya hai,0,cab_service,hi,none
+ride cancel karni hai,0,cab_service,hi,none
+driver se call karni hai,0,cab_service,hi,none
+fare estimate dekhna hai,0,cab_service,hi,none
+ride complete ho gaya hai,0,cab_service,hi,none
+extra stops add karni hain,0,cab_service,hi,none
+outstation ride lena hai,0,cab_service,hi,none
+sedan book karna hai,0,cab_service,hi,none
+driver ne route change kiya,0,cab_service,hi,none
+koi item bhul gaya,0,cab_service,hi,none
+courier book kar liya hai,0,courier,hi,none
+tracking number mil gaya hai,0,courier,hi,none
+delivery ho gaya hai,0,courier,hi,none
+delivery delayed hai,0,courier,hi,none
+shipping charges dekhne hain,0,courier,hi,none
+fragile item hai dhyan se pack karo,0,courier,hi,none
+pickup time confirm karni hai,0,courier,hi,none
+address correction karni hai,0,courier,hi,none
+insurance add karni hai,0,courier,hi,none
+delivery slot book karni hai,0,courier,hi,none
+fest mein participate karna hai,0,college,hi,none
+attendance maintain karni hai,0,college,hi,none
+club meeting mein aana hai,0,college,hi,none
+bus timing dekhni hai,0,college,hi,none
+registration form fill karna hai,0,college,hi,none
+library card renew karni hai,0,college,hi,none
+mess menu change hua hai,0,college,hi,none
+seminar mein attend karna hai,0,college,hi,none
+sports trials hain,0,college,hi,none
+cultural event ka registration karna hai,0,college,hi,none
+bgmi mein match khelna hai,0,gaming,hi,none
+free fire ka new update aaya hai,0,gaming,hi,none
+rank improve karni hai,0,gaming,hi,none
+new agent try karna hai,0,gaming,hi,none
+season reset ho gaya hai,0,gaming,hi,none
+gaming setup upgrade karna hai,0,gaming,hi,none
+steam sale chal raha hai,0,gaming,hi,none
+tournament register karna hai,0,gaming,hi,none
+headphones ki recommendation chahiye,0,gaming,hi,none
+stream shuru karni hai,0,gaming,hi,none
+kaisa hai tu abhi,0,personal,hi,none
+call nahi aaya kya,0,personal,hi,none
+time schedule karna hai,0,personal,hi,none
+future planning kar raha hoon,0,personal,hi,none
+health checkup karaya hai,0,personal,hi,none
+hobby shuru karni hai,0,personal,hi,none
+self improvement karni hai,0,personal,hi,none
+meditation shuru kiya hai,0,personal,hi,none
+routine maintain kar raha hoon,0,personal,hi,none
+relationships ke baare mein soch raha hoon,0,personal,hi,none
