@@ -7,7 +7,7 @@ Serves HTML templates and provides API endpoints
 import sys
 import os
 # sys.path.append('/Users/jssingh/cybcup')  # Removed absolute path dependency
-
+sys.path.append(os.path.join(os.path.dirname(__file__), 'model'))
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import joblib
 import numpy as np
@@ -386,8 +386,41 @@ def transcribe_audio_fallback(audio_file):
         print(f"❌ Fallback transcription error: {e}")
         return f"Error: Transcription failed - {str(e)}"
 
+def calculate_keyword_score(text):
+    """Calculate scam probability based on detected keywords only"""
+    text_lower = text.lower()
+    words = set(text_lower.split())
+
+    scam_keywords = {
+        'urgent': 8, 'immediately': 8, 'now': 5, 'asap': 6, 'quick': 4, 'hurry': 5,
+        'expire': 6, 'limited': 4, 'deadline': 5,
+        'block': 6, 'suspend': 7, 'close': 4, 'terminate': 6, 'freeze': 5, 'cancel': 4,
+        'password': 7, 'pin': 8, 'otp': 9, 'cvv': 9, 'ssn': 8, 'aadhar': 8,
+        'account': 4, 'card': 4, 'verify': 5, 'confirm': 4, 'update': 4,
+        'won': 7, 'winner': 7, 'prize': 6, 'lottery': 8, 'congratulations': 6,
+        'reward': 5, 'selected': 5, 'claim': 5,
+        'bank': 4, 'government': 5, 'official': 5, 'department': 5, 'irs': 6,
+        'microsoft': 5, 'amazon': 5, 'google': 4, 'facebook': 4, 'paypal': 6,
+        'whatsapp': 4, 'cyber': 5, 'police': 5, 'legal': 5,
+        'rs': 4, 'rupees': 5, 'pay': 4, 'payment': 5, 'fee': 5, 'money': 5,
+        'cash': 5, 'amount': 4, 'refund': 6, 'transfer': 6,
+        'call': 3, 'click': 5, 'visit': 4, 'download': 6, 'install': 6,
+        'register': 4, 'login': 5, 'link': 5
+    }
+
+    total_score = 0
+    detected = []
+
+    for kw, weight in scam_keywords.items():
+        if kw in words:
+            detected.append(kw)
+            total_score += weight
+
+    return total_score, detected
+
+
 def predict_scam(text):
-    """Make prediction using the trained model"""
+    """Make prediction using the trained model with keyword-based override"""
     if not model or not vectorizer:
         return {'error': 'Model not loaded'}
 
@@ -398,39 +431,76 @@ def predict_scam(text):
         # Transform text using vectorizer
         X = vectorizer.transform([processed_text])
 
-        # Debug logging for feature dimensions
-        print(f"🔍 Prediction feature shape: {X.shape}")
-        print(f"🔍 Model expects: {model.n_features_in_} features")
+        # Debug logging
+        print(f"🔍 DEBUG: Text: \"{text[:60]}...\"")
 
-        # Get prediction and probability
-        prediction = model.predict(X)[0]
-        probability = model.predict_proba(X)[0][1]  # Probability of being scam (0 to 1)
-        
-        # Convert to percentage (0 to 100)
-        percentage = float(probability * 100)
-        
-        # Determine risk level
-        if percentage >= 75:
-            risk_level = "CRITICAL RISK"
-        elif percentage >= 50:
+        # Get raw ML model output
+        raw_probs = model.predict_proba(X)[0]
+        ml_scam_prob = raw_probs[1]
+        ml_prediction = model.predict(X)[0]
+
+        print(f"🔍 DEBUG ML: predict={ml_prediction}, probs=[safe:{raw_probs[0]:.4f}, scam:{raw_probs[1]:.4f}]")
+
+        # Calculate keyword-based score
+        keyword_score, detected_kw = calculate_keyword_score(text)
+        print(f"🔍 DEBUG Keywords: score={keyword_score}, found={detected_kw}")
+
+        # Hybrid scoring: use keywords to override ML when no keywords detected
+        # If no keywords found, trust ML only at reduced confidence
+        # If keywords found, blend ML with keyword score
+
+        if len(detected_kw) == 0:
+            # No scam keywords detected - apply calibrated low baseline
+            # Use ML confidence as baseline but scale it down significantly
+            ml_baseline = ml_scam_prob * 100
+
+            # Calibration: reduce baseline based on text characteristics
+            text_len = len(text.split())
+            if text_len <= 10:
+                # Short text: likely greeting/query, very low risk
+                percentage = min(ml_baseline * 0.15, 5.0)  # 0-5%
+            elif text_len <= 30:
+                # Medium text: could be normal conversation
+                percentage = min(ml_baseline * 0.25, 8.0)  # 0-8%
+            else:
+                # Longer text: slightly more cautious but still low
+                percentage = min(ml_baseline * 0.35, 10.0)  # 0-10%
+
+            print(f"🔍 DEBUG: No keywords - calibrated baseline: {percentage:.2f}% (len={text_len})")
+        else:
+            # Keywords detected - use keyword-based score as primary
+            # Keyword score of 10+ should indicate real scam
+            keyword_prob = min(1.0, keyword_score * 0.08)  # score 10 = 80%
+            # Weight: 30% ML, 70% keywords (trust keywords more)
+            percentage = (ml_scam_prob * 0.3 + keyword_prob * 0.7) * 100
+            print(f"🔍 DEBUG: Keywords found - blended: ML={ml_scam_prob:.2f}, kw={keyword_prob:.2f}, final={percentage:.2f}%")
+
+        percentage = float(percentage)
+
+        # Determine risk level with corrected thresholds
+        if percentage >= 61:
             risk_level = "HIGH RISK"
-        elif percentage >= 25:
+        elif percentage >= 31:
             risk_level = "MEDIUM RISK"
-        elif percentage >= 10:
+        elif percentage >= 11:
             risk_level = "LOW RISK"
         else:
             risk_level = "MINIMAL RISK"
-        
+
+        print(f"🔍 DEBUG Final: percentage={percentage:.2f}%, risk_level={risk_level}")
+
         return {
             'text': text,
             'scam_probability': round(percentage, 2),
-            'raw_probability': round(probability, 4),
-            'prediction': int(prediction),
+            'raw_probability': round(ml_scam_prob, 4),
+            'ml_prediction': int(ml_prediction),
+            'keyword_score': keyword_score,
+            'detected_keywords': detected_kw,
             'risk_level': risk_level,
-            'is_scam': bool(prediction == 1),
-            'model_version': 'RandomForest_v1.0'
+            'is_scam': bool(percentage >= 31),
+            'model_version': 'LogisticRegression_v1.0_hybrid'
         }
-        
+
     except Exception as e:
         return {'error': f'Prediction failed: {str(e)}'}
 
@@ -628,6 +698,10 @@ def analyze_text():
 
         return jsonify(formatted_result)
 
+        print(f"🔍 DEBUG: Returning response JSON:")
+        print(f"   transcript: {formatted_result['transcript'][:80]}...")
+        print(f"   detected_keywords: {formatted_result['analysis_details']['detected_keywords']}")
+
     except Exception as e:
         return jsonify({'error': f'Server error: {str(e)}'}), 500
 
@@ -671,7 +745,11 @@ def analyze_audio():
         }
         
         return jsonify(formatted_result)
-        
+
+        print(f"🔍 DEBUG: Returning response JSON:")
+        print(f"   transcript: {formatted_result['transcript'][:80]}...")
+        print(f"   detected_keywords: {formatted_result['analysis_details']['detected_keywords']}")
+
     except Exception as e:
         return jsonify({'error': f'Audio analysis failed: {str(e)}'}), 500
 
@@ -711,8 +789,10 @@ def get_warnings(text, probability):
 
 def get_analysis_details(text):
     """Get detailed analysis of the text"""
+    print(f"\n🔍 DEBUG: Analyzing transcript: \"{text[:100]}...\"")
+
     text_lower = text.lower()
-    
+
     scam_keywords = []
     critical_phrases = []
     patterns = []
@@ -751,11 +831,13 @@ def get_analysis_details(text):
     if len([word for word in text.split() if word.isupper()]) > 3:
         patterns.append('Excessive use of capital letters (urgency tactic)')
     
-    return {
+    result = {
         'detected_keywords': scam_keywords[:10],  # Limit to top 10
         'critical_phrases': critical_phrases[:5],   # Limit to top 5
         'patterns': patterns[:5]                    # Limit to top 5
     }
+    print(f"🔍 DEBUG: Extracted keywords: {result['detected_keywords']}")
+    return result
 
 # =========================
 # STARTUP (Works with Gunicorn)

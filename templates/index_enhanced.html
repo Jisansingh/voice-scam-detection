@@ -1204,7 +1204,11 @@
             
             if (analysis_details) {
                 const analysisDetails = document.getElementById('analysisDetails');
-                
+
+                document.getElementById('keywordsList').textContent = 'None detected';
+                document.getElementById('criticalPhrases').textContent = 'None detected';
+                document.getElementById('patternsList').textContent = 'None detected';
+
                 if (analysis_details.detected_keywords && analysis_details.detected_keywords.length > 0) {
                     document.getElementById('keywordsList').textContent = analysis_details.detected_keywords.join(', ');
                 }
